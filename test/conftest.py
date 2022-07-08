@@ -21,7 +21,7 @@ import pytest
 
 
 @pytest.fixture(scope="session")
-def user_folder() -> Path:
+def app_folder() -> Path:
     return Path(__file__).parent.joinpath('user_folder')
 
 

@@ -18,7 +18,7 @@ __maintainer__ = "James Dooley"
 __status__ = "Production"
 
 __all__ = ['UnitOfMeasure', 'Location', 'Locations', 'WeatherData', 'Weather', 'CurrentWeather', 'DailyWeather',
-           'WeatherReportParams']
+           'WeatherReportParams', 'Country', 'State']
 
 import enum
 import typing
@@ -32,6 +32,25 @@ def _from_timestamp_to_date(value: int) -> pendulum.DateTime:
     by some DTO classes via a converter attribute on the field definition
     """
     return pendulum.from_timestamp(value)
+
+
+class Country(typing.NamedTuple):
+    """
+    This class holds the name and iso code for a country
+    """
+    iso_2: str
+    iso_3: str
+    name: str
+
+
+class State(typing.NamedTuple):
+    """
+    This class holds the name and iso code for a state
+    """
+    code: str
+    name: str
+    capital: str
+    region: str
 
 
 class UnitOfMeasure(str, enum.Enum):
