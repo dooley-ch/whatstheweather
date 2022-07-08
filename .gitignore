@@ -129,3 +129,4 @@ dmypy.json
 .pyre/
 test/user_folder/*.json
 .DS_Store
+test/user_folder/*.cfg

@@ -29,7 +29,8 @@ setup(
     install_requires=[
         'Click',
         'Attrs',
-        'Pendulum'
+        'Pendulum',
+        'TinyDB'
     ],
     entry_points={
         'console_scripts': [
