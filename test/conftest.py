@@ -28,3 +28,8 @@ def app_folder() -> Path:
 @pytest.fixture(scope="session")
 def data_folder() -> Path:
     return Path(__file__).parent.parent.joinpath('whatstheweather', 'data')
+
+
+@pytest.fixture(scope="session")
+def open_weather_map_key() -> str:
+    return '6446a5397a0c3f38012e657b86f62be2'

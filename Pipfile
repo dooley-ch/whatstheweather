@@ -8,6 +8,7 @@ click = "*"
 attrs = "*"
 pendulum = "*"
 tinydb = "*"
+requests = "*"
 
 [dev-packages]
 pytest = "*"
