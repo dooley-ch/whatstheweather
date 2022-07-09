@@ -9,6 +9,7 @@ attrs = "*"
 pendulum = "*"
 tinydb = "*"
 requests = "*"
+loguru = "*"
 
 [dev-packages]
 pytest = "*"

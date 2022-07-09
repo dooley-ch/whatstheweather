@@ -25,7 +25,7 @@ from pathlib import Path
 from enum import Enum
 import attrs
 import tinydb
-from .types import Country, State
+from .app_types import Country, State
 
 
 def _get_database_file(app_folder: Path) -> Path:

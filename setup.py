@@ -30,7 +30,8 @@ setup(
         'Click',
         'Attrs',
         'Pendulum',
-        'TinyDB'
+        'TinyDB',
+        'Loguru'
     ],
     entry_points={
         'console_scripts': [

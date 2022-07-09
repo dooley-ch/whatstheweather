@@ -25,7 +25,7 @@ from .data import init_database
 from pprint import pprint
 
 import click
-from .types import WeatherReportParams, UnitOfMeasure
+from .app_types import WeatherReportParams, UnitOfMeasure
 
 _us_states = ["AL", "AK", "AZ", "AR", "CO", "CT", "DE", "DC", "FL", "GA", "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA",
               "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK",

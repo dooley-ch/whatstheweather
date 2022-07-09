@@ -20,7 +20,7 @@ __all__ = ['get_location', 'get_weather']
 
 from typing import TypedDict
 import requests
-from .types import UnitOfMeasure, Location, Locations, WeatherData, CurrentWeather, DailyWeather
+from .app_types import UnitOfMeasure, Location, Locations, WeatherData, CurrentWeather, DailyWeather
 
 
 class _GeoQueryParams(TypedDict):
