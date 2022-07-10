@@ -18,10 +18,36 @@ __status__ = "Production"
 
 __all__ = []
 
-
+import atexit
+import os
+from pathlib import Path
+import click
+from core.logging import configure_logging, log_start, log_end
 from core.commands import app
 
+
+# noinspection PyBroadException
+def exit_routine() -> None:
+    try:
+        log_end()
+    except:
+        click.secho('Failed to log application exit!', fg='red')
+
+
 def main() -> None:
+    # Set the working folder
+    working_folder: Path = Path(__file__).parent
+    os.chdir(working_folder)
+
+    # Set up the exit routine
+    atexit.register(exit_routine)
+
+    # Configure logging
+    print(click.get_app_dir('whatstheweather'))
+    configure_logging(Path(click.get_app_dir('whatstheweather')))
+    log_start()
+
+    # Process the commands
     app()
 
 

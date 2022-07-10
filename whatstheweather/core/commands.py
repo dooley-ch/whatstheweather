@@ -19,26 +19,75 @@ __status__ = "Production"
 __all__ = ['app']
 
 from pathlib import Path
-
+from .logging import log_activity
 from .support import find_folder
-from .data import init_database
+from .data import init_database, is_valid_iso_2_country_code, is_valid_iso_3_country_code, is_valid_country_name, \
+    get_country_by_iso_3, get_country_by_name, is_valid_state_code, get_state_by_name
+from .config import get_api_key, save_api_key
 from pprint import pprint
-
 import click
-from .app_types import WeatherReportParams, UnitOfMeasure
+from .app_types import WeatherReportParams, UnitOfMeasure, Location
+from .open_weather_map import get_location, get_weather
 
-_us_states = ["AL", "AK", "AZ", "AR", "CO", "CT", "DE", "DC", "FL", "GA", "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA",
-              "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK",
+
+_us_states = ["AL", "AK", "AZ", "AR", "CO", "CT", "DE", "DC", "FL", "GA", "HI", "ID", "IL", "IN", "IA", "KS", "KY",
+              "LA",
+              "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH",
+              "OK",
               "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY", "Other"]
 
-
 pass_report_params = click.make_pass_decorator(WeatherReportParams)
+
+
+def app_folder() -> Path:
+    return Path(click.get_app_dir('whatstheweather'))
 
 
 # noinspection PyUnusedLocal
 def _abort_if_false(ctx, param, value):
     if not value:
         ctx.abort()
+
+
+def _get_location(city: str, country_code: str, key: str, state: str | None = None) -> Location | None:
+    if state == 'Other':
+        state = None
+
+    locs = get_location(city, country_code, key, state)
+    if locs:
+        if len(locs) == 1:
+            return locs[0]
+
+
+def _get_state_code(database_path: Path, value: str) -> str | None:
+    if len(value) == 2:
+        if is_valid_state_code(database_path, value):
+            return value
+        else:
+            return None
+
+    state = get_state_by_name(value)
+    if state:
+        return state.code
+
+
+def _get_country_code(database_path: Path, value: str) -> str | None:
+    if len(value) == 2:
+        if is_valid_iso_2_country_code(database_path, value):
+            return value
+        else:
+            return None
+
+    if len(value) == 3:
+        if is_valid_iso_3_country_code(database_path, value):
+            data = get_country_by_iso_3(database_path, value)
+            return data.iso_2
+        else:
+            return None
+
+    if is_valid_country_name(database_path, value):
+        data = get_country_by_name(database_path, value)
+        return data.iso_2
 
 
 @click.group
@@ -66,8 +115,11 @@ def init() -> None:
     Initializes the app database with the country ISO codes
     """
     data_folder = find_folder('data')
-    app_folder = Path(click.get_app_dir('whatstheweather'))
-    init_database(app_folder, data_folder)
+    init_database(app_folder(), data_folder)
+    log_activity('Application initialized')
+
+    click.secho('Application initialized', fg='green')
+
 
 @setup.command
 @click.argument('value', required=True, type=str)
@@ -77,10 +129,8 @@ def key(value: str) -> None:
 
     VALUE - A valid OpenWeatherMap key
     """
-    print('Set API key')
-
-    user_folder = click.get_app_dir('whatstheweather')
-    print(user_folder)
+    save_api_key(app_folder(), value)
+    click.secho('API Key saved', fg='green')
 
 
 @app.group()
@@ -96,9 +146,29 @@ def report(ctx: click.Context, city: str, country: str, unit: str, state: str) -
     """
     This command generates a weather report
     """
-    params: WeatherReportParams = WeatherReportParams(city, state, country, 0, 0,
-                                                      UnitOfMeasure(unit), '6446a5397a0c3f38012e657b86f62be2')
+    api_key = get_api_key(app_folder())
 
+    ctry = _get_country_code(app_folder(), country)
+    if not ctry:
+        click.echo(f"Invalid country: {country}")
+        raise click.Abort()
+
+    st = 'Other'
+    if ctry == 'US':
+        if state == 'Other':
+            state = click.prompt('Enter state ', type=str)
+            st = _get_state_code(app_folder(), state)
+            if not st:
+                click.echo(f"Invalid state: {state}")
+                raise click.Abort()
+
+    loc: Location = _get_location(city, ctry, api_key, st)
+    if not loc:
+        click.echo(f"Unable able to determine location for city: {city}")
+        raise click.Abort()
+
+    params: WeatherReportParams = WeatherReportParams(city, st, ctry, loc.longitude, loc.latitude,
+                                                      UnitOfMeasure(unit), api_key)
     ctx.obj = params
 
 
