@@ -31,7 +31,10 @@ setup(
         'Attrs',
         'Pendulum',
         'TinyDB',
-        'Loguru'
+        'Requests',
+        'Loguru',
+        'Inquirer',
+        'Rich'
     ],
     entry_points={
         'console_scripts': [

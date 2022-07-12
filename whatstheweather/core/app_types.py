@@ -18,12 +18,16 @@ __maintainer__ = "James Dooley"
 __status__ = "Production"
 
 __all__ = ['UnitOfMeasure', 'Location', 'Locations', 'WeatherData', 'Weather', 'CurrentWeather', 'DailyWeather',
-           'WeatherReportParams', 'Country', 'State']
+           'WeatherReportParams', 'Country', 'State', 'Report']
 
 import enum
 import typing
 import attrs
 import pendulum
+from rich.layout import Layout
+
+
+Report = typing.NewType('Report', Layout)
 
 
 def _from_timestamp_to_date(value: int) -> pendulum.DateTime:
@@ -43,14 +47,15 @@ class Country(typing.NamedTuple):
     name: str
 
 
-class State(typing.NamedTuple):
+@attrs.frozen
+class State:
     """
     This class holds the name and iso code for a state
     """
-    code: str
-    name: str
-    capital: str
-    region: str
+    code: str = attrs.field(default='Other')
+    name: str = attrs.field(default='Other')
+    capital: str = attrs.field(default='Other')
+    region: str = attrs.field(default='Other')
 
 
 class UnitOfMeasure(str, enum.Enum):
@@ -68,7 +73,9 @@ class WeatherReportParams:
     This class represents the parameters needed to generate a weather report
     """
     city: str
+    state_code: str
     state: str
+    country_code: str
     country: str
     longitude: float
     latitude: float
@@ -143,9 +150,10 @@ class CurrentWeather:
     visibility: int
     wind_speed: float
     wind_deg: float
-    weather: list[Weather] = attrs.Factory(dict)
-    temp: Temperature = attrs.Factory(dict)
-    feels_like: FeelsLike = attrs.Factory(dict)
+    temp: float
+    feels_like: float
+    weather: Weather
+
 
     @classmethod
     def parse(cls, data: dict[str, typing.Any]) -> CurrentWeather:
@@ -158,12 +166,12 @@ class CurrentWeather:
         visibility = data['visibility']
         wind_speed = data['wind_speed']
         wind_deg = data['wind_deg']
-        weather = data['weather']
         temp = data['temp']
         feels_like = data['feels_like']
+        weather = data['weather']
 
         return CurrentWeather(dt, sunrise, sunset, pressure, humidity, clouds, visibility,
-                              wind_speed, wind_deg, weather, temp, feels_like)
+                              wind_speed, wind_deg, temp, feels_like, Weather(**weather[0]))
 
 
 @attrs.frozen
@@ -213,5 +221,6 @@ class WeatherData:
     longitude: float
     latitude: float
     timezone: str
+    unit_of_measure: UnitOfMeasure
     current_weather: CurrentWeather
     daily_weather: list[DailyWeather] = attrs.Factory(list)

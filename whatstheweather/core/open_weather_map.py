@@ -72,11 +72,11 @@ def get_location(city: str, country_code: str, key: str, state: str | None = Non
 
 
 # noinspection HttpUrlsUsage
-def get_weather(location: Location, key: str, unit_of_measure: UnitOfMeasure = UnitOfMeasure.Standard) -> WeatherData | None:
+def get_weather(location: Location, state: str, country: str, key: str, unit_of_measure: UnitOfMeasure = UnitOfMeasure.Standard) -> WeatherData | None:
     params: _WeatherQueryParams = dict()
     params['lon'] = location.longitude
     params['lat'] = location.latitude
-    params['units'] = str(unit_of_measure)
+    params['units'] = unit_of_measure.value
     params['exclude'] = 'hourly,minutely'
     params['appid'] = key
 
@@ -92,7 +92,7 @@ def get_weather(location: Location, key: str, unit_of_measure: UnitOfMeasure = U
 
         current = CurrentWeather.parse(current_data)
 
-        weather = WeatherData(location.city, location.state, location.country, lat, lon, timezone, current)
+        weather = WeatherData(location.city, state, country, lat, lon, timezone, unit_of_measure, current)
 
         for item in daily_data:
             weather.daily_weather.append(DailyWeather.parse(item))

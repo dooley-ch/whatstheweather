@@ -19,6 +19,9 @@ __status__ = "Production"
 from pathlib import Path
 import pytest
 import whatstheweather.core.logging as logging
+import whatstheweather.core.app_types as types
+import whatstheweather.core.open_weather_map as owm
+
 
 @pytest.fixture(scope="session")
 def app_folder() -> Path:
@@ -54,3 +57,21 @@ def init_logger() -> Path:
     logging.configure_logging(logs_folder)
 
     return logs_folder
+
+
+@pytest.fixture(scope="session")
+def weather_data_balla(open_weather_map_key) -> types.WeatherData:
+    locations = owm.get_location('Balla', 'IE', open_weather_map_key)
+    assert len(locations) == 3
+    item = locations[0]
+
+    return owm.get_weather(item, 'Other', 'Ireland', open_weather_map_key)
+
+
+@pytest.fixture(scope="session")
+def weather_data_new_york(open_weather_map_key) -> types.WeatherData:
+    locations = owm.get_location('New York', 'US', open_weather_map_key, 'NY')
+    assert len(locations) == 1
+    item = locations[0]
+
+    return owm.get_weather(item, 'New York', 'United States of America', open_weather_map_key)

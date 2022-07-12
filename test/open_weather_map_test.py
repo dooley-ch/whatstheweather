@@ -16,6 +16,7 @@ __version__ = "1.0.0"
 __maintainer__ = "James Dooley"
 __status__ = "Production"
 
+import whatstheweather.core.app_types as types
 import whatstheweather.core.open_weather_map as owm
 
 
@@ -44,7 +45,7 @@ class TestOpenWeatherMapWeather:
         assert len(locations) == 3
         item = locations[0]
 
-        weather = owm.get_weather(item, open_weather_map_key)
+        weather = owm.get_weather(item, 'Ireland', open_weather_map_key)
         assert weather
 
         assert weather.city == 'Balla'
@@ -56,7 +57,7 @@ class TestOpenWeatherMapWeather:
         assert len(locations) == 1
         item = locations[0]
 
-        weather = owm.get_weather(item, open_weather_map_key)
+        weather = owm.get_weather(item, 'Switzerland', open_weather_map_key, types.UnitOfMeasure.Metric)
         assert weather
 
         assert weather.city == 'Mörel'

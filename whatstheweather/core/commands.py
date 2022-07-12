@@ -18,25 +18,36 @@ __status__ = "Production"
 
 __all__ = ['app']
 
+import time
+import re
+from typing import NamedTuple
 from pathlib import Path
+import inquirer
 from .logging import log_activity
 from .support import find_folder
-from .data import init_database, is_valid_iso_2_country_code, is_valid_iso_3_country_code, is_valid_country_name, \
-    get_country_by_iso_3, get_country_by_name, is_valid_state_code, get_state_by_name
+from .data import init_database, get_country_by_iso_3, get_country_by_iso_2, get_country_by_name, \
+    get_state_by_name, get_state_by_code
 from .config import get_api_key, save_api_key
 from pprint import pprint
 import click
-from .app_types import WeatherReportParams, UnitOfMeasure, Location
+from .app_types import WeatherReportParams, UnitOfMeasure, Location, Country, State
 from .open_weather_map import get_location, get_weather
+from .reports import current_report, daily_report
+from rich.console import Console
+
+_console = Console()
 
 
 _us_states = ["AL", "AK", "AZ", "AR", "CO", "CT", "DE", "DC", "FL", "GA", "HI", "ID", "IL", "IN", "IA", "KS", "KY",
-              "LA",
-              "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH",
-              "OK",
-              "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY", "Other"]
+              "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND",
+              "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY", "Other"]
 
 pass_report_params = click.make_pass_decorator(WeatherReportParams)
+
+
+class LocationCoordinates(NamedTuple):
+    latitude: float
+    longitude: float
 
 
 def app_folder() -> Path:
@@ -49,45 +60,44 @@ def _abort_if_false(ctx, param, value):
         ctx.abort()
 
 
-def _get_location(city: str, country_code: str, key: str, state: str | None = None) -> Location | None:
+def _get_location(city: str, country_code: str, api_key: str, state: str | None = None) -> LocationCoordinates | None:
     if state == 'Other':
         state = None
 
-    locs = get_location(city, country_code, key, state)
+    locs = get_location(city, country_code, api_key, state)
     if locs:
         if len(locs) == 1:
-            return locs[0]
+            return LocationCoordinates(locs[0].latitude, locs[0].longitude)
 
+        loc_names = [str(loc) for loc in locs]
+        loc_names.append('None of these')
 
-def _get_state_code(database_path: Path, value: str) -> str | None:
-    if len(value) == 2:
-        if is_valid_state_code(database_path, value):
-            return value
-        else:
+        selected_loc = inquirer.list_input("Select location ", choices=loc_names)
+        if selected_loc == 'None of these':
             return None
 
-    state = get_state_by_name(value)
-    if state:
-        return state.code
+        regx = re.search('\((.+?)\)', selected_loc)
+        if regx:
+            found = regx.group(1)
+            values = found.split(',')
+            return LocationCoordinates(float(values[0]), float(values[1]))
 
 
-def _get_country_code(database_path: Path, value: str) -> str | None:
+def _get_state_code(database_path: Path, value: str) -> State | None:
     if len(value) == 2:
-        if is_valid_iso_2_country_code(database_path, value):
-            return value
-        else:
-            return None
+        return get_state_by_code(value)
+
+    return get_state_by_name(database_path, value)
+
+
+def _get_country_code(database_path: Path, value: str) -> Country | None:
+    if len(value) == 2:
+        return get_country_by_iso_2(database_path, value)
 
     if len(value) == 3:
-        if is_valid_iso_3_country_code(database_path, value):
-            data = get_country_by_iso_3(database_path, value)
-            return data.iso_2
-        else:
-            return None
+        return get_country_by_iso_3(database_path, value)
 
-    if is_valid_country_name(database_path, value):
-        data = get_country_by_name(database_path, value)
-        return data.iso_2
+    return get_country_by_name(database_path, value)
 
 
 @click.group
@@ -153,37 +163,42 @@ def report(ctx: click.Context, city: str, country: str, unit: str, state: str) -
         click.echo(f"Invalid country: {country}")
         raise click.Abort()
 
-    st = 'Other'
-    if ctry == 'US':
+    state_record = State()
+    if ctry.iso_2 == 'US':
         if state == 'Other':
-            state = click.prompt('Enter state ', type=str)
-            st = _get_state_code(app_folder(), state)
-            if not st:
-                click.echo(f"Invalid state: {state}")
+            value = click.prompt('Enter state ', type=str)
+            state_record = _get_state_code(app_folder(), value)
+            if not state_record:
+                click.echo(f"Invalid state: {value}")
                 raise click.Abort()
 
-    loc: Location = _get_location(city, ctry, api_key, st)
+    loc = _get_location(city, ctry.iso_2, api_key, state_record.code)
+
     if not loc:
         click.echo(f"Unable able to determine location for city: {city}")
         raise click.Abort()
 
-    params: WeatherReportParams = WeatherReportParams(city, st, ctry, loc.longitude, loc.latitude,
-                                                      UnitOfMeasure(unit), api_key)
+    params: WeatherReportParams = WeatherReportParams(city, state_record.code, state_record.name, ctry.iso_2, ctry.name,
+                                                      loc.longitude, loc.latitude, UnitOfMeasure(unit), api_key)
     ctx.obj = params
 
 
 @report.command
 @pass_report_params
-def current(params) -> None:
+def current(params: WeatherReportParams) -> None:
     """
      Generates the current weather report for a given city
     """
-    pprint(params)
+    loc = Location(params.city, params.state, params.country_code, params.longitude, params.latitude)
+    weather_data = get_weather(loc, params.state, params.country, params.api_key, params.unit_of_measure)
+    report = current_report(weather_data)
+    _console.print(report)
 
+    time.sleep(15)
 
 @report.command
 @pass_report_params
-def daily(params) -> None:
+def daily(params: WeatherReportParams) -> None:
     """
      Generates the daily weather report for a given city
     """

@@ -10,6 +10,8 @@ pendulum = "*"
 tinydb = "*"
 requests = "*"
 loguru = "*"
+inquirer = "*"
+rich = "*"
 
 [dev-packages]
 pytest = "*"
