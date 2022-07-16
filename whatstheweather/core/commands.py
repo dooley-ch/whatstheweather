@@ -103,6 +103,7 @@ def _get_state(database_path: Path, value: str) -> State | None:
 def _get_country(database_path: Path, value: str) -> Country | None:
     """
     Gets the details of a country from the database
+
     """
     if len(value) == 2:
         return get_country_by_iso_2(database_path, value)

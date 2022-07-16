@@ -40,24 +40,24 @@ class TestOpenWeatherMapLocation:
 
 
 class TestOpenWeatherMapWeather:
-    def test_get_location_balla(self, open_weather_map_key: str) -> None:
+    def test_get_weather_balla(self, open_weather_map_key: str) -> None:
         locations = owm.get_location('Balla', 'IE', open_weather_map_key)
         assert len(locations) == 3
         item = locations[0]
 
-        weather = owm.get_weather(item, 'Ireland', open_weather_map_key)
+        weather = owm.get_weather(item, 'Other', 'Ireland', open_weather_map_key)
         assert weather
 
         assert weather.city == 'Balla'
         assert weather.current_weather
         assert len(weather.daily_weather) == 8
 
-    def test_get_location_morel(self, open_weather_map_key: str) -> None:
+    def test_get_weather_morel(self, open_weather_map_key: str) -> None:
         locations = owm.get_location('Mörel', 'CH', open_weather_map_key)
         assert len(locations) == 1
         item = locations[0]
 
-        weather = owm.get_weather(item, 'Switzerland', open_weather_map_key, types.UnitOfMeasure.Metric)
+        weather = owm.get_weather(item, 'Other', 'Switzerland', open_weather_map_key, types.UnitOfMeasure.Metric)
         assert weather
 
         assert weather.city == 'Mörel'

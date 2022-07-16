@@ -93,6 +93,76 @@ class _ReportPanelBase:
         return f"{value} hPa"
 
 
+class _DailyReportPanel(_ReportPanelBase):
+    """
+    This class builds the daily report panel
+    """
+    def __rich__(self) -> Panel:
+        """
+        Builds the daily weather display panel
+        """
+        daily_weather = self._data.daily_weather
+        uom = self._data.unit_of_measure
+
+        grid = Table.grid(padding=1, expand=True)
+        grid.add_column(justify='left')
+        grid.add_column(justify='right')
+        grid.add_column(justify='right')
+        grid.add_column(justify='right')
+        grid.add_column(justify='right')
+        grid.add_column(justify='right')
+
+        grid.add_row('', daily_weather[0].dt.to_date_string(), daily_weather[1].dt.to_date_string(),
+                     daily_weather[2].dt.to_date_string(), daily_weather[3].dt.to_date_string(),
+                     daily_weather[4].dt.to_date_string())
+
+        grid.add_row('Temperature:', self._format_temp(daily_weather[0].temp, uom), self._format_temp(daily_weather[1].temp, uom),
+                     self._format_temp(daily_weather[2].temp, uom), self._format_temp(daily_weather[3].temp, uom),
+                     self._format_temp(daily_weather[4].temp, uom))
+
+        grid.add_row('Feels Like:', self._format_temp(daily_weather[0].feels_like, uom), self._format_temp(daily_weather[1].feels_like, uom),
+                     self._format_temp(daily_weather[2].feels_like, uom), self._format_temp(daily_weather[3].feels_like, uom),
+                     self._format_temp(daily_weather[4].feels_like, uom))
+
+        grid.add_row('Sunrise:', daily_weather[0].sunrise.to_datetime_string(), daily_weather[1].sunrise.to_datetime_string(),
+                     daily_weather[2].sunrise.to_datetime_string(), daily_weather[3].sunrise.to_datetime_string(),
+                     daily_weather[4].sunrise.to_datetime_string())
+
+        grid.add_row('Sunset:', daily_weather[0].sunset.to_datetime_string(), daily_weather[1].sunset.to_datetime_string(),
+                     daily_weather[2].sunset.to_datetime_string(), daily_weather[3].sunset.to_datetime_string(),
+                     daily_weather[4].sunset.to_datetime_string())
+
+        grid.add_row('Pressure:', self._format_pressure(daily_weather[0].pressure), self._format_pressure(daily_weather[1].pressure),
+                     self._format_pressure(daily_weather[2].pressure), self._format_pressure(daily_weather[3].pressure),
+                     self._format_pressure(daily_weather[3].pressure))
+
+        grid.add_row('Humidity:', self._format_percentage(daily_weather[0].humidity), self._format_percentage(daily_weather[1].humidity),
+                     self._format_percentage(daily_weather[2].humidity), self._format_percentage(daily_weather[3].humidity),
+                     self._format_percentage(daily_weather[3].humidity))
+
+        grid.add_row('Clouds:', self._format_percentage(daily_weather[0].clouds), self._format_percentage(daily_weather[1].clouds),
+                     self._format_percentage(daily_weather[2].clouds), self._format_percentage(daily_weather[3].clouds),
+                     self._format_percentage(daily_weather[3].clouds))
+
+        grid.add_row('Weather:', daily_weather[0].weather.description, daily_weather[1].weather.description,
+                     daily_weather[2].weather.description, daily_weather[3].weather.description,
+                     daily_weather[4].weather.description)
+
+        grid.add_row('Wind Direction:', self._format_wind_direction(daily_weather[0].wind_deg),
+                     self._format_wind_direction(daily_weather[1].wind_deg),
+                     self._format_wind_direction(daily_weather[2].wind_deg),
+                     self._format_wind_direction(daily_weather[3].wind_deg),
+                     self._format_wind_direction(daily_weather[4].wind_deg))
+
+        grid.add_row('Wind Speed:', self._format_wind_speed(daily_weather[0].wind_speed, uom),
+                     self._format_wind_speed(daily_weather[1].wind_speed, uom),
+                     self._format_wind_speed(daily_weather[2].wind_speed, uom),
+                     self._format_wind_speed(daily_weather[3].wind_speed, uom),
+                     self._format_wind_speed(daily_weather[4].wind_speed, uom))
+
+        return Panel(grid, title='Daily Weather', style="yellow on black")
+
+
 class _CurrentReportPanel(_ReportPanelBase):
     """
     This class builds the current report panel
@@ -239,4 +309,8 @@ def daily_report(data: WeatherData) -> Report:
     """
     This function creates the daily weather report
     """
-    pass
+    layout = _get_report_layout()
+    layout["location"].update(_Location(data.city, data.state, data.country, data.longitude, data.latitude))
+    layout["body"].update(_DailyReportPanel(data))
+
+    return Report(layout)

@@ -186,9 +186,9 @@ class DailyWeather:
     wind_speed: float
     wind_deg: float
     clouds: int
-    weather: list[Weather] = attrs.Factory(dict)
-    temp: Temperature = attrs.Factory(dict)
-    feels_like: FeelsLike = attrs.Factory(dict)
+    weather: Weather
+    temp: float
+    feels_like: float
 
     @classmethod
     def parse(cls, data: dict[str, typing.Any]) -> DailyWeather:
@@ -205,7 +205,7 @@ class DailyWeather:
         feels_like = data['feels_like']
 
         return DailyWeather(dt, sunrise, sunset, pressure, humidity, wind_speed, wind_deg, clouds,
-                            weather, temp, feels_like)
+                            Weather(**weather[0]), temp['day'], feels_like['day'])
 
 
 @attrs.frozen
