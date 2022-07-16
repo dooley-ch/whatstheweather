@@ -26,7 +26,6 @@ import attrs
 import pendulum
 from rich.layout import Layout
 
-
 Report = typing.NewType('Report', Layout)
 
 
@@ -153,7 +152,6 @@ class CurrentWeather:
     temp: float
     feels_like: float
     weather: Weather
-
 
     @classmethod
     def parse(cls, data: dict[str, typing.Any]) -> CurrentWeather:

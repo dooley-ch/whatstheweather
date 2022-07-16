@@ -28,6 +28,9 @@ from core.commands import app
 
 # noinspection PyBroadException
 def exit_routine() -> None:
+    """
+    Logs the termination of the application
+    """
     try:
         log_end()
     except:
@@ -35,6 +38,9 @@ def exit_routine() -> None:
 
 
 def main() -> None:
+    """
+    The application entry point
+    """
     # Set the working folder
     working_folder: Path = Path(__file__).parent
     os.chdir(working_folder)

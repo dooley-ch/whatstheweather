@@ -28,7 +28,6 @@ from .support import find_folder
 from .data import init_database, get_country_by_iso_3, get_country_by_iso_2, get_country_by_name, \
     get_state_by_name, get_state_by_code
 from .config import get_api_key, save_api_key
-from pprint import pprint
 import click
 from .app_types import WeatherReportParams, UnitOfMeasure, Location, Country, State
 from .open_weather_map import get_location, get_weather
@@ -36,7 +35,6 @@ from .reports import current_report, daily_report
 from rich.console import Console
 
 _console = Console()
-
 
 _us_states = ["AL", "AK", "AZ", "AR", "CO", "CT", "DE", "DC", "FL", "GA", "HI", "ID", "IL", "IN", "IA", "KS", "KY",
               "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND",
@@ -46,11 +44,17 @@ pass_report_params = click.make_pass_decorator(WeatherReportParams)
 
 
 class LocationCoordinates(NamedTuple):
+    """
+    Holds the coordinates of a given city
+    """
     latitude: float
     longitude: float
 
 
 def app_folder() -> Path:
+    """
+    Returns the location of the folder where the application's data is stored
+    """
     return Path(click.get_app_dir('whatstheweather'))
 
 
@@ -61,6 +65,9 @@ def _abort_if_false(ctx, param, value):
 
 
 def _get_location(city: str, country_code: str, api_key: str, state: str | None = None) -> LocationCoordinates | None:
+    """
+    Gets the location of a given city
+    """
     if state == 'Other':
         state = None
 
@@ -83,14 +90,20 @@ def _get_location(city: str, country_code: str, api_key: str, state: str | None 
             return LocationCoordinates(float(values[0]), float(values[1]))
 
 
-def _get_state_code(database_path: Path, value: str) -> State | None:
+def _get_state(database_path: Path, value: str) -> State | None:
+    """
+    Gets the details of a given state from the database
+    """
     if len(value) == 2:
-        return get_state_by_code(value)
+        return get_state_by_code(database_path, value)
 
     return get_state_by_name(database_path, value)
 
 
-def _get_country_code(database_path: Path, value: str) -> Country | None:
+def _get_country(database_path: Path, value: str) -> Country | None:
+    """
+    Gets the details of a country from the database
+    """
     if len(value) == 2:
         return get_country_by_iso_2(database_path, value)
 
@@ -158,7 +171,7 @@ def report(ctx: click.Context, city: str, country: str, unit: str, state: str) -
     """
     api_key = get_api_key(app_folder())
 
-    ctry = _get_country_code(app_folder(), country)
+    ctry = _get_country(app_folder(), country)
     if not ctry:
         click.echo(f"Invalid country: {country}")
         raise click.Abort()
@@ -167,7 +180,7 @@ def report(ctx: click.Context, city: str, country: str, unit: str, state: str) -
     if ctry.iso_2 == 'US':
         if state == 'Other':
             value = click.prompt('Enter state ', type=str)
-            state_record = _get_state_code(app_folder(), value)
+            state_record = _get_state(app_folder(), value)
             if not state_record:
                 click.echo(f"Invalid state: {value}")
                 raise click.Abort()
@@ -191,10 +204,9 @@ def current(params: WeatherReportParams) -> None:
     """
     loc = Location(params.city, params.state, params.country_code, params.longitude, params.latitude)
     weather_data = get_weather(loc, params.state, params.country, params.api_key, params.unit_of_measure)
-    report = current_report(weather_data)
-    _console.print(report)
-
+    _console.print(current_report(weather_data))
     time.sleep(15)
+
 
 @report.command
 @pass_report_params
@@ -202,4 +214,7 @@ def daily(params: WeatherReportParams) -> None:
     """
      Generates the daily weather report for a given city
     """
-    pprint(params)
+    loc = Location(params.city, params.state, params.country_code, params.longitude, params.latitude)
+    weather_data = get_weather(loc, params.state, params.country, params.api_key, params.unit_of_measure)
+    _console.print(daily_report(weather_data))
+    time.sleep(15)

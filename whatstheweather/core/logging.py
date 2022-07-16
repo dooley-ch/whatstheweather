@@ -23,7 +23,13 @@ from loguru import logger
 
 
 class ActivityFileFormatter:
+    """
+    This class creates a line break in the logging file
+    """
     def __init__(self):
+        """
+        Initializes an instance of the class
+        """
         self._default_format = "{time:YYYY-MM-DD HH:mm:ss} | {level: <8} | {function: ^15} | {file: ^15} | {line: >3} " \
                                "" \
                                "| {message} \n"
@@ -31,6 +37,9 @@ class ActivityFileFormatter:
                             "=============================================== \n"
 
     def format(self, record):
+        """
+        Formats the line for recording in the log file
+        """
         if 'line' in record["extra"]:
             return self._line_format
 
@@ -38,6 +47,9 @@ class ActivityFileFormatter:
 
 
 def configure_logging(app_folder: Path):
+    """
+    Configures logging for the application
+    """
     file_format: str = "{time:YYYY-MM-DD HH:mm:ss} | {level: <8} | {function: ^15} | {file: ^15} | {line: >3} | {" \
                        "message}"
 
@@ -60,12 +72,21 @@ def configure_logging(app_folder: Path):
 
 
 def log_start():
+    """
+    Creates a line break to indicate the starting of an application run
+    """
     logger.bind(activity=True, line=True).log("LINE", 'Start')
 
 
 def log_end():
+    """
+    Creates a line break to indicate the ending of an application run
+    """
     logger.bind(activity=True, line=True).log("LINE", 'End')
 
 
 def log_activity(message: str) -> None:
+    """
+    Writes an activity entry in the log file
+    """
     logger.bind(activity=True).success(message)

@@ -73,6 +73,9 @@ def get_location(city: str, country_code: str, key: str, state: str | None = Non
 
 # noinspection HttpUrlsUsage
 def get_weather(location: Location, state: str, country: str, key: str, unit_of_measure: UnitOfMeasure = UnitOfMeasure.Standard) -> WeatherData | None:
+    """
+    Gets the weather data for a given location
+    """
     params: _WeatherQueryParams = dict()
     params['lon'] = location.longitude
     params['lat'] = location.latitude

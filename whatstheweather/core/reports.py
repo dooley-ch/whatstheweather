@@ -15,7 +15,6 @@ __license__ = "MIT"
 __version__ = "1.0.0"
 __maintainer__ = "James Dooley"
 __status__ = "Production"
-
 __all__ = ['current_report', 'daily_report']
 
 from datetime import datetime
@@ -25,7 +24,11 @@ from rich.table import Table
 from rich.layout import Layout
 from .app_types import WeatherData, Report, UnitOfMeasure
 
+# region Module Variables
+
 console = Console()
+
+# endregion
 
 
 class _ReportPanelBase:
@@ -42,6 +45,9 @@ class _ReportPanelBase:
 
     # noinspection PyMethodMayBeStatic
     def _format_temp(self, value: float, unit_of_measure: UnitOfMeasure) -> str:
+        """
+        Formats the value according to the unit of measure provided
+        """
         match unit_of_measure:
             case UnitOfMeasure.Metric: return f"{value}°C"
             case UnitOfMeasure.Imperial: return f"{value}°F"
@@ -56,22 +62,34 @@ class _ReportPanelBase:
 
     # noinspection PyMethodMayBeStatic
     def _format_visibility(self, value: int) -> str:
+        """
+        Format the value for display
+        """
         if value < 1000:
             return f"{value}m"
         return f"{round(value / 1000, 2)}Km"
 
     # noinspection PyMethodMayBeStatic
     def _format_wind_direction(self, value: float) -> str:
+        """
+        Format the value for display
+        """
         return f"{value}°"
 
     # noinspection PyMethodMayBeStatic
     def _format_wind_speed(self, value: float, unit_of_measure: UnitOfMeasure) -> str:
+        """
+        Formats the value according to the unit of measure provided
+        """
         if unit_of_measure == UnitOfMeasure.Imperial:
             return f"{value} miles/hour"
         return f"{value} metre/sec"
 
     # noinspection PyMethodMayBeStatic
     def _format_pressure(self, value: float) -> str:
+        """
+        Format the value for display
+        """
         return f"{value} hPa"
 
 
@@ -80,6 +98,9 @@ class _CurrentReportPanel(_ReportPanelBase):
     This class builds the current report panel
     """
     def __rich__(self) -> Panel:
+        """
+        Builds the current weather display panel
+        """
         current_weather = self._data.current_weather
         uom = self._data.unit_of_measure
 
@@ -111,6 +132,9 @@ class _Header:
     """
 
     def __rich__(self) -> Panel:
+        """
+        Builds the header display panel
+        """
         grid = Table.grid(expand=True)
 
         grid.add_column(justify="center", ratio=1)
@@ -129,6 +153,9 @@ class _Footer:
     """
 
     def __rich__(self) -> Panel:
+        """
+        Builds the footer display panel
+        """
         grid = Table.grid(padding=1, expand=True)
         grid.add_column(justify="center", ratio=1)
         grid.add_row(
@@ -159,6 +186,9 @@ class _Location:
         self._latitude = latitude
 
     def __rich__(self) -> Panel:
+        """
+        Builds the location display panel
+        """
         grid = Table.grid(padding=1, expand=True)
         grid.add_column(justify='right')
         grid.add_column(justify='left')
@@ -174,7 +204,6 @@ class _Location:
 def _get_report_layout() -> Layout:
     """
     This function builds the basic report layout
-    :return:
     """
     layout = Layout(name="root")
 
