@@ -1,8 +1,0 @@
-Click
-Attrs
-Pendulum
-TinyDB
-Requests
-Loguru
-Inquirer
-Rich

@@ -1,2 +1,0 @@
-[console_scripts]
-whatstheweather = whatstheweather.core.commands:app
