@@ -35,7 +35,29 @@ Activate the environment and install the application:
 
 ```
 pipenv shell
-pipenv install 
+pipenv install git+https://github.com/dooley-ch/whatstheweather#egg=whatstheweather
+```
+
+Once the application has been installed, you can check the version number to ensure that it has been properly installed:
+
+```
+whatstheweather --version
+```
+
+Before making a weather query the application needs to be initialized and you need to add your OpenWeatherKey:
+
+```
+whatstheweather setup init
+```
+
+```
+whatstheweather setup key 6***.........***2
+```
+
+Once you have completed these tasks, you can try a query:
+
+```
+whatstheweather report -c "New York" -cty USA  -u metric -s NY current
 ```
 
 ## Follow Up
