@@ -12,6 +12,7 @@ requests = "*"
 loguru = "*"
 inquirer = "*"
 rich = "*"
+yaspin = "*"
 
 [dev-packages]
 pytest = "*"

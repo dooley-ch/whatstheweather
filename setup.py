@@ -34,7 +34,8 @@ setup(
         'Requests',
         'Loguru',
         'Inquirer',
-        'Rich'
+        'Rich',
+        'Yaspin'
     ],
     entry_points={
         'console_scripts': [

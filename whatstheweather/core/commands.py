@@ -33,6 +33,7 @@ from .app_types import WeatherReportParams, UnitOfMeasure, Location, Country, St
 from .open_weather_map import get_location, get_weather
 from .reports import current_report, daily_report
 from rich.console import Console
+from yaspin import yaspin
 
 _console = Console()
 
@@ -197,6 +198,7 @@ def report(ctx: click.Context, city: str, country: str, unit: str, state: str) -
     ctx.obj = params
 
 
+@yaspin(text="Requesting data...")
 @report.command
 @pass_report_params
 def current(params: WeatherReportParams) -> None:
@@ -209,6 +211,7 @@ def current(params: WeatherReportParams) -> None:
     time.sleep(15)
 
 
+@yaspin(text="Requesting data...")
 @report.command
 @pass_report_params
 def daily(params: WeatherReportParams) -> None:
