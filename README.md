@@ -62,5 +62,5 @@ whatstheweather report -c "New York" -cty USA  -u metric -s NY current
 
 ## Follow Up
 
-A detailed commentary of this application can be found here: [Developer Notes](https://www.developernotes.org)
+A detailed commentary of this application can be found here: [Developer Notes](https://www.developernotes.org/2022/08/command-line-reference-application/)
  
