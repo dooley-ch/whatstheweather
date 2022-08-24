@@ -19,12 +19,11 @@ __status__ = "Production"
 __all__ = []
 
 import atexit
-
-from rich.traceback import install
-from loguru import logger
-from src.support import configure_logging, app_folder
-from src.ui import system_message, message
-from src.commands import app
+import os
+from pathlib import Path
+import click
+from core.logging import configure_logging, log_start, log_end
+from core.commands import app
 
 
 # noinspection PyBroadException
@@ -33,23 +32,28 @@ def exit_routine() -> None:
     Logs the termination of the application
     """
     try:
-        logger.info("*** Application Ended ***")
+        log_end()
     except:
-        system_message('Failed to log application exit!')
+        click.secho('Failed to log application exit!', fg='red')
 
 
-def main():
-    # Configure traceback support
-    install(show_locals=True, max_frames=5)
+def main() -> None:
+    """
+    The application entry point
+    """
+    # Set the working folder
+    working_folder: Path = Path(__file__).parent
+    os.chdir(working_folder)
 
-    # Configure logging
-    configure_logging(app_folder())
-
-    # Setup exit callback
+    # Set up the exit routine
     atexit.register(exit_routine)
 
-    # Run application
-    logger.info("*** Application Started ***")
+    # Configure logging
+    print(click.get_app_dir('whatstheweather'))
+    configure_logging(Path(click.get_app_dir('whatstheweather')))
+    log_start()
+
+    # Process the commands
     app()
 
 
