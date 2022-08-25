@@ -72,8 +72,8 @@
 					}
 				},
 				{
-					"id": "295178c9-e7e3-40e9-b1ac-fb9ec826e5f6",
-					"name": "region",
+					"id": "138d5519-bb1c-4958-ab6e-9631de4ae043",
+					"name": "timezone",
 					"datatype": "TEXT",
 					"param": "",
 					"pk": false,
@@ -88,8 +88,24 @@
 					}
 				},
 				{
+					"id": "295178c9-e7e3-40e9-b1ac-fb9ec826e5f6",
+					"name": "region",
+					"datatype": "TEXT",
+					"param": "",
+					"pk": false,
+					"nn": false,
+					"comment": "",
+					"defaultvalue": "",
+					"data": "",
+					"collation": "",
+					"after": "",
+					"sqlite": {
+						"autoincrement": false
+					}
+				},
+				{
 					"id": "93e2c07e-2eb8-4459-b1ee-f6ff81fc5d50",
-					"name": "sub_region",
+					"name": "country_code",
 					"datatype": "TEXT",
 					"param": "",
 					"pk": false,
@@ -120,14 +136,62 @@
 					}
 				},
 				{
-					"id": "3e63231e-11a5-4d94-bdf0-6040d12a3734",
-					"name": "timezone",
+					"id": "f69b45fe-2025-431b-b3ea-dbe2c45d91fa",
+					"name": "post_codes",
+					"datatype": "TEXT",
+					"param": "",
+					"pk": false,
+					"nn": false,
+					"comment": "",
+					"defaultvalue": "",
+					"data": "",
+					"collation": "",
+					"after": "",
+					"sqlite": {
+						"autoincrement": false
+					}
+				},
+				{
+					"id": "37321ac3-12a8-42cb-9274-3a6e52f6e029",
+					"name": "lock_version",
+					"datatype": "INTEGER",
+					"param": "",
+					"pk": false,
+					"nn": true,
+					"comment": "",
+					"defaultvalue": "1",
+					"data": "",
+					"collation": "",
+					"after": "",
+					"sqlite": {
+						"autoincrement": false
+					}
+				},
+				{
+					"id": "cbdd3054-53ef-4383-8f88-a156032be746",
+					"name": "created_at",
 					"datatype": "TEXT",
 					"param": "",
 					"pk": false,
 					"nn": true,
 					"comment": "",
-					"defaultvalue": "",
+					"defaultvalue": "CURRENT_TIMESTAMP",
+					"data": "",
+					"collation": "",
+					"after": "",
+					"sqlite": {
+						"autoincrement": false
+					}
+				},
+				{
+					"id": "06023eca-6123-4eb2-a500-e1e87b1c1f1b",
+					"name": "updated_at",
+					"datatype": "TEXT",
+					"param": "",
+					"pk": false,
+					"nn": true,
+					"comment": "",
+					"defaultvalue": "CURRENT_TIMESTAMP",
 					"data": "",
 					"collation": "",
 					"after": "",
@@ -206,7 +270,8 @@
 			"identiferCase": "original",
 			"includeSchema": "always",
 			"quotation": "if_needed"
-		}
+		},
+		"lastSaved": "Thu Aug 25 2022 20:01:12 GMT+0200 (Central European Summer Time)"
 	},
 	"otherObjects": {},
 	"diagrams": {
@@ -226,8 +291,8 @@
 					"referencedItemId": "4dd6bf15-a984-4789-9dc1-943d0b884362",
 					"x": 100,
 					"y": 88,
-					"gHeight": 171,
-					"gWidth": 191,
+					"gHeight": 243,
+					"gWidth": 218,
 					"color": "#ffffff",
 					"background": "#03a9f4",
 					"resized": false,
