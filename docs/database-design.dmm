@@ -1,0 +1,248 @@
+{
+	"tables": {
+		"4dd6bf15-a984-4789-9dc1-943d0b884362": {
+			"id": "4dd6bf15-a984-4789-9dc1-943d0b884362",
+			"visible": true,
+			"name": "location",
+			"desc": "",
+			"estimatedSize": "",
+			"cols": [
+				{
+					"id": "d1d1e7e7-6fa9-4ab4-8d79-2594ea52f3b5",
+					"name": "name",
+					"datatype": "TEXT",
+					"param": "",
+					"pk": true,
+					"nn": true,
+					"comment": "",
+					"defaultvalue": "",
+					"data": "",
+					"collation": "",
+					"after": "",
+					"sqlite": {
+						"autoincrement": false
+					}
+				},
+				{
+					"id": "b49f524f-ec5e-4056-8186-c3267d580809",
+					"name": "location",
+					"datatype": "TEXT",
+					"param": "",
+					"pk": false,
+					"nn": true,
+					"comment": "",
+					"defaultvalue": "",
+					"data": "",
+					"collation": "",
+					"after": "",
+					"sqlite": {
+						"autoincrement": false
+					}
+				},
+				{
+					"id": "356a8e51-fe71-4e0a-a340-75fe75c5ebfe",
+					"name": "latitude",
+					"datatype": "TEXT",
+					"param": "",
+					"pk": false,
+					"nn": true,
+					"comment": "",
+					"defaultvalue": "",
+					"data": "",
+					"collation": "",
+					"after": "",
+					"sqlite": {
+						"autoincrement": false
+					}
+				},
+				{
+					"id": "ee46f696-a9e6-4c93-ad5d-fbe4d9aebf67",
+					"name": "longitude",
+					"datatype": "TEXT",
+					"param": "",
+					"pk": false,
+					"nn": true,
+					"comment": "",
+					"defaultvalue": "",
+					"data": "",
+					"collation": "",
+					"after": "",
+					"sqlite": {
+						"autoincrement": false
+					}
+				},
+				{
+					"id": "295178c9-e7e3-40e9-b1ac-fb9ec826e5f6",
+					"name": "region",
+					"datatype": "TEXT",
+					"param": "",
+					"pk": false,
+					"nn": true,
+					"comment": "",
+					"defaultvalue": "",
+					"data": "",
+					"collation": "",
+					"after": "",
+					"sqlite": {
+						"autoincrement": false
+					}
+				},
+				{
+					"id": "93e2c07e-2eb8-4459-b1ee-f6ff81fc5d50",
+					"name": "sub_region",
+					"datatype": "TEXT",
+					"param": "",
+					"pk": false,
+					"nn": true,
+					"comment": "",
+					"defaultvalue": "",
+					"data": "",
+					"collation": "",
+					"after": "",
+					"sqlite": {
+						"autoincrement": false
+					}
+				},
+				{
+					"id": "86bf3e98-7203-4a80-b492-7c127ebe6c1f",
+					"name": "country",
+					"datatype": "TEXT",
+					"param": "",
+					"pk": false,
+					"nn": false,
+					"comment": "",
+					"defaultvalue": "",
+					"data": "",
+					"collation": "",
+					"after": "",
+					"sqlite": {
+						"autoincrement": false
+					}
+				},
+				{
+					"id": "3e63231e-11a5-4d94-bdf0-6040d12a3734",
+					"name": "timezone",
+					"datatype": "TEXT",
+					"param": "",
+					"pk": false,
+					"nn": true,
+					"comment": "",
+					"defaultvalue": "",
+					"data": "",
+					"collation": "",
+					"after": "",
+					"sqlite": {
+						"autoincrement": false
+					}
+				}
+			],
+			"relations": [],
+			"lines": [],
+			"keys": [
+				{
+					"id": "ecfc1c1d-27a2-452b-8a4d-996447913846",
+					"name": "Primary key",
+					"isPk": true,
+					"using": "na",
+					"cols": [
+						{
+							"id": "ac096526-9779-4844-8666-24a79dfee7fc",
+							"colid": "d1d1e7e7-6fa9-4ab4-8d79-2594ea52f3b5"
+						}
+					]
+				}
+			],
+			"indexes": [],
+			"embeddable": false,
+			"generate": true,
+			"generateCustomCode": true,
+			"collation": "",
+			"objectType": "table",
+			"sqlite": {
+				"withoutrowid": false
+			}
+		}
+	},
+	"relations": {},
+	"notes": {},
+	"lines": {},
+	"model": {
+		"name": "WhatsTheWeather",
+		"id": "7dd306cd-8f36-46bd-8142-2eccacac59bf",
+		"activeDiagram": "d7996111-f69f-414f-b76d-38d6c2b37e0e",
+		"desc": "",
+		"path": "",
+		"type": "SQLITE",
+		"version": 1,
+		"parentTableInFkCols": true,
+		"caseConvention": "under",
+		"replaceSpace": "_",
+		"color": "transparent",
+		"sideSelections": true,
+		"isDirty": true,
+		"storedin": {
+			"major": 4,
+			"minor": 6,
+			"extra": 6
+		},
+		"embeddedInParentsIsDisplayed": true,
+		"schemaContainerIsDisplayed": false,
+		"cardinalityIsDisplayed": false,
+		"estimatedSizeIsDisplayed": false,
+		"writeFileParam": false,
+		"def_collation": "",
+		"def_coltopk": true,
+		"sqlSettings": {
+			"wrapLines": true,
+			"wrapOffset": 80,
+			"indent": true,
+			"indentationString": "spaces",
+			"indentationSize": 2,
+			"limitItemsOnLine": true,
+			"maxListItemsOnLine": 3,
+			"statementDelimiter": ";",
+			"routineDelimiter": ";",
+			"keywordCase": "upper",
+			"identiferCase": "original",
+			"includeSchema": "always",
+			"quotation": "if_needed"
+		}
+	},
+	"otherObjects": {},
+	"diagrams": {
+		"d7996111-f69f-414f-b76d-38d6c2b37e0e": {
+			"name": "Main Diagram",
+			"description": "",
+			"id": "d7996111-f69f-414f-b76d-38d6c2b37e0e",
+			"keysgraphics": true,
+			"linegraphics": "detailed",
+			"zoom": 1,
+			"background": "transparent",
+			"lineColor": "transparent",
+			"isOpen": true,
+			"main": true,
+			"diagramItems": {
+				"4dd6bf15-a984-4789-9dc1-943d0b884362": {
+					"referencedItemId": "4dd6bf15-a984-4789-9dc1-943d0b884362",
+					"x": 100,
+					"y": 88,
+					"gHeight": 171,
+					"gWidth": 191,
+					"color": "#ffffff",
+					"background": "#03a9f4",
+					"resized": false,
+					"autoExpand": true
+				}
+			},
+			"scroll": {
+				"x": 0,
+				"y": 0
+			},
+			"type": "erd"
+		}
+	},
+	"order": [
+		"4dd6bf15-a984-4789-9dc1-943d0b884362"
+	],
+	"collapsedTreeItems": []
+}
