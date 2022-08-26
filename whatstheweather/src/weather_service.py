@@ -21,27 +21,42 @@ __all__ = ['get_locations', 'get_forecast']
 import pendulum
 import requests
 from loguru import logger
-from . model import Location, Forecast
+from .model import Location, Forecast, Locations, Forecasts
 
 
 def _get_summary(code: int) -> str:
     match code:
-        case 0: return 'Clear sky'
-        case 1 | 2 | 3: return 'Mainly clear, partly cloudy, and overcast'
-        case 45 | 48: return 'Fog and depositing rime fog'
-        case 51 | 53 | 55: return 'Drizzle: Light, moderate, and dense intensity'
-        case 56 | 57: return 'Freezing Drizzle: Light and dense intensity'
-        case 61 | 63 | 65: return 'Rain: Slight, moderate and heavy intensity'
-        case 66 | 67: return 'Freezing Rain: Light and heavy intensity'
-        case 71 | 73 | 75: return 'Snow fall: Slight, moderate, and heavy intensity'
-        case 77: return	'Snow grains'
-        case 80 | 81 | 82: return 'Rain showers: Slight, moderate, and violent'
-        case 85 | 86: return 'Snow showers slight and heavy'
-        case 95: return 'Thunderstorm: Slight or moderate'
-        case 96 | 99: return 'Thunderstorm with slight and heavy hail'
-        case _: return 'Unknown'
+        case 0:
+            return 'Clear sky'
+        case 1 | 2 | 3:
+            return 'Mainly clear, partly cloudy, and overcast'
+        case 45 | 48:
+            return 'Fog and depositing rime fog'
+        case 51 | 53 | 55:
+            return 'Drizzle: Light, moderate, and dense intensity'
+        case 56 | 57:
+            return 'Freezing Drizzle: Light and dense intensity'
+        case 61 | 63 | 65:
+            return 'Rain: Slight, moderate and heavy intensity'
+        case 66 | 67:
+            return 'Freezing Rain: Light and heavy intensity'
+        case 71 | 73 | 75:
+            return 'Snow fall: Slight, moderate, and heavy intensity'
+        case 77:
+            return 'Snow grains'
+        case 80 | 81 | 82:
+            return 'Rain showers: Slight, moderate, and violent'
+        case 85 | 86:
+            return 'Snow showers slight and heavy'
+        case 95:
+            return 'Thunderstorm: Slight or moderate'
+        case 96 | 99:
+            return 'Thunderstorm with slight and heavy hail'
+        case _:
+            return 'Unknown'
 
-def get_forecast(lat: float, long: float, timezone: str) -> list[Forecast]:
+
+def get_forecast(location: str, lat: float, long: float, timezone: str) -> Forecasts:
     """
     This function returns the weather forecast at the given location
 
@@ -53,12 +68,17 @@ def get_forecast(lat: float, long: float, timezone: str) -> list[Forecast]:
     params = {
         "latitude": lat,
         "longitude": long,
-        "daily": ['weathercode' ,'temperature_2m_max', 'temperature_2m_min', 'sunrise', 'sunset', 'precipitation_sum',
+        "daily": ['weathercode', 'temperature_2m_max', 'temperature_2m_min', 'sunrise', 'sunset', 'precipitation_sum',
                   'rain_sum', 'showers_sum', 'snowfall_sum', 'precipitation_hours'],
         "timezone": timezone
     }
 
-    response = requests.get(url='https://api.open-meteo.com/v1/forecast', params=params)
+    try:
+        response = requests.get(url='https://api.open-meteo.com/v1/forecast', params=params)
+    except Exception as e:
+        logger.error(f"Failed to get forecast data: ({lat},{long}), {timezone} - {e}")
+        raise
+
     if response.status_code == 200:
         data = response.json()['daily']
 
@@ -78,13 +98,16 @@ def get_forecast(lat: float, long: float, timezone: str) -> list[Forecast]:
             snowfall = data['snowfall_sum'][i]
             precipitation_hours = data['precipitation_hours'][i]
 
-            forecasts.append(Forecast(day, weather_code, weather_summary, temp_max, temp_min, sunrise, sunset,
+            forecasts.append(Forecast(location, day, weather_code, weather_summary, temp_max, temp_min, sunrise, sunset,
                                       precipitation_sum, rain, showers, snowfall, precipitation_hours))
 
-        return forecasts
+        return Forecasts(forecasts)
+    else:
+        logger.error(
+            f"Failed to obtain forecast data: ({lat},{long}), {timezone} - {response.status_code} - {response.text}")
 
 
-def get_locations(name: str, limit: int = 10) -> list[Location] | None:
+def get_locations(name: str, limit: int = 10) -> Locations | None:
     """
     This function returns the lookup entries for a given location name
 
@@ -94,9 +117,17 @@ def get_locations(name: str, limit: int = 10) -> list[Location] | None:
     """
     params = {"name": name, "count": limit}
 
-    response = requests.get(url='https://geocoding-api.open-meteo.com/v1/search', params=params)
+    try:
+        response = requests.get(url='https://geocoding-api.open-meteo.com/v1/search', params=params)
+    except Exception as e:
+        logger.error(f"Failed to get location: {name} - {e}")
+        raise
+
     if response.status_code == 200:
-        data = response.json()['results']
+        response_data = response.json()
+        if 'results' not in response_data:
+            return None
+        data = response_data['results']
         locations = list()
 
         for item in data:
@@ -109,8 +140,9 @@ def get_locations(name: str, limit: int = 10) -> list[Location] | None:
             timezone = item['timezone']
             post_codes = item['postcodes'] if 'postcodes' in item else []
 
-            locations.append(Location(name, latitude, longitude, region, country_code, country, timezone, post_codes))
+            locations.append(
+                Location(name, name, latitude, longitude, region, country_code, country, timezone, post_codes))
 
-        return locations
-
-
+        return Locations(locations)
+    else:
+        logger.error(f"Failed to obtain location data: {name} - {response.status_code} - {response.text}")

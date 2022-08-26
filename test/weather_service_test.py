@@ -31,6 +31,11 @@ def test_get_locations_city_of_london() -> None:
     assert len(locations) == 1
 
 
+def test_get_invalid_location() -> None:
+    locations = service.get_locations('erw43543')
+    assert locations is None
+
+
 def test_get_forecast_langenthal() -> None:
     forecasts = service.get_forecast(47.2116019, 7.788786, 'Europe/Berlin')
     assert len(forecasts) == 7

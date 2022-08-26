@@ -16,15 +16,19 @@ __version__ = "1.0.0"
 __maintainer__ = "James Dooley"
 __status__ = "Production"
 
-__all__ = ['insert_location', 'update_location', 'delete_location', 'all_locations']
+__all__ = ['get_location_record', 'insert_location_record', 'update_location_record',
+           'delete_location_record', 'all_locations']
 
-from typing import Any
 import sqlite3
 from pathlib import Path
+from typing import Any
+
 import attrs
-from . support import app_folder
-from . model import Location, LocationRecord, LocationRecordMetadata, Locations
-from . errors import DuplicateRecordError, RecordNotFoundError
+from loguru import logger
+
+from .errors import DuplicateRecordError
+from .model import Location, LocationRecordMetadata, Locations
+from .support import app_folder
 
 
 def _filter(field: attrs.Attribute, value: Any) -> bool:
@@ -56,9 +60,13 @@ def _init_database(db_con: sqlite3.Connection) -> None:
             updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
             PRIMARY KEY(name));"""
 
-    with db_con:
-        cursor = db_con.cursor()
-        cursor.execute(sql)
+    try:
+        with db_con:
+            cursor = db_con.cursor()
+            cursor.execute(sql)
+    except Exception as e:
+        logger.error(f"Failed to create the application database: {e}")
+        raise
 
 
 def _get_connection(file: Path | None = None) -> sqlite3.Connection:
@@ -81,7 +89,7 @@ def _get_connection(file: Path | None = None) -> sqlite3.Connection:
     return db_con
 
 
-def insert_location(record: Location, file: Path | None = None) -> bool:
+def insert_location_record(record: Location, file: Path | None = None) -> bool:
     """
     This function inserts a record in the database
     """
@@ -99,6 +107,9 @@ def insert_location(record: Location, file: Path | None = None) -> bool:
     except sqlite3.IntegrityError as e:
         if str(e) == 'UNIQUE constraint failed: project.name':
             raise DuplicateRecordError(f"A location with the name: {record.name} already exists.")
+
+    except Exception as e:
+        logger.error(f"Failed to insert record: {record.name} - {e}")
         raise
     else:
         return cursor.lastrowid > 0
@@ -106,7 +117,7 @@ def insert_location(record: Location, file: Path | None = None) -> bool:
         con.close()
 
 
-def update_location(record: Location, file: Path | None = None) -> bool:
+def update_location_record(record: Location, file: Path | None = None) -> bool:
     """
     This function updates a database record
     """
@@ -122,11 +133,12 @@ def update_location(record: Location, file: Path | None = None) -> bool:
             cursor.execute(sql, (record.location, record.latitude, record.longitude, record.timezone,
                                  record.region, record.country_code, record.country, record.post_codes, record.name))
         return cursor.rowcount == 1
+
     finally:
         con.close()
 
 
-def delete_location(name: str, file: Path | None = None) -> bool:
+def delete_location_record(name: str, file: Path | None = None) -> bool:
     """
     This function deletes a database record
     """
@@ -135,28 +147,35 @@ def delete_location(name: str, file: Path | None = None) -> bool:
     con = _get_connection(file)
 
     try:
-        cursor = con.cursor()
-        cursor.execute(sql, (name,))
+        with con:
+            cursor = con.cursor()
+            cursor.execute(sql, (name,))
         return cursor.rowcount == 1
+    except Exception as e:
+        logger.error(f"Failed to delete record: {name} - {e}")
+
     finally:
         con.close()
 
 
-def get_location(name: str, file: Path | None = None) -> LocationRecord:
+def get_location_record(name: str, file: Path | None = None) -> Location:
     """
     Gets the location record for a given name
     """
-    sql = """SELECT name, location, latitude, longitude, timezone, region, country_code, country, post_codes, 
-                lock_version, created_at, updated_at FROM location"""
+    sql = """SELECT name, location, latitude, longitude, region, country_code, country, timezone, post_codes 
+                 FROM location WHERE (name = ?)"""
 
     con = _get_connection(file)
 
     try:
         cursor = con.cursor()
-        cursor.execute(sql)
+        cursor.execute(sql, (name,))
         row = cursor.fetchone()
         if row:
-            return LocationRecord(*row)
+            return Location(*row)
+    except Exception as e:
+        logger.error(f"Failed to get location record: {name} - {e}")
+        raise
     finally:
         con.close()
 
@@ -165,8 +184,8 @@ def all_locations(file: Path | None = None) -> Locations | None:
     """
     This function returns all the location records in the database
     """
-    sql = """SELECT name, latitude, longitude, country_code, country, post_codes, 
-                lock_version, created_at, updated_at FROM location"""
+    sql = """SELECT name, latitude, longitude, region, country_code, country, post_codes, 
+                lock_version, created_at, updated_at FROM location ORDER BY name"""
 
     con = _get_connection(file)
 
@@ -179,5 +198,8 @@ def all_locations(file: Path | None = None) -> Locations | None:
             for row in rows:
                 records.append(LocationRecordMetadata(*row))
             return Locations(records)
+    except Exception as e:
+        logger.error(f"Failed to get location records - {e}")
+        raise
     finally:
         con.close()

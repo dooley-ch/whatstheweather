@@ -20,11 +20,12 @@ __all__ = []
 
 import atexit
 
-from rich.traceback import install
 from loguru import logger
-from src.support import configure_logging, app_folder
-from src.ui import system_message, message
+from rich.traceback import install
+
 from src.commands import app
+from src.support import configure_logging, app_folder
+from src.ui import system_message
 
 
 # noinspection PyBroadException
