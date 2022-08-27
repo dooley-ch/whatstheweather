@@ -18,10 +18,13 @@ __status__ = "Production"
 
 __all__ = ['get_locations', 'get_forecast', 'get_current_weather']
 
+from time import sleep
+
 import pendulum
 import requests
 from loguru import logger
-from .model import Location, Forecast, Locations, Forecasts, CurrentWeather
+from . model import Location, Forecast, Locations, Forecasts, CurrentWeather
+from . ui import console
 
 
 def _get_summary(code: int) -> str:
@@ -76,7 +79,9 @@ def get_current_weather(location: str, lat: float, long: float, timezone: str) -
     }
 
     try:
-        response = requests.get(url='https://api.open-meteo.com/v1/forecast', params=params)
+        with console.status("Downloading current weather..."):
+            sleep(2)
+            response = requests.get(url='https://api.open-meteo.com/v1/forecast', params=params)
     except Exception as e:
         logger.error(f"Failed to get forecast data: ({lat},{long}), {timezone} - {e}")
         raise
@@ -117,7 +122,9 @@ def get_forecast(location: str, lat: float, long: float, timezone: str) -> Forec
     }
 
     try:
-        response = requests.get(url='https://api.open-meteo.com/v1/forecast', params=params)
+        with console.status("Downloading weather forecast..."):
+            sleep(2)
+            response = requests.get(url='https://api.open-meteo.com/v1/forecast', params=params)
     except Exception as e:
         logger.error(f"Failed to get forecast data: ({lat},{long}), {timezone} - {e}")
         raise
@@ -161,7 +168,9 @@ def get_locations(name: str, limit: int = 10) -> Locations | None:
     params = {"name": name, "count": limit}
 
     try:
-        response = requests.get(url='https://geocoding-api.open-meteo.com/v1/search', params=params)
+        with console.status("Downloading locations..."):
+            sleep(2)
+            response = requests.get(url='https://geocoding-api.open-meteo.com/v1/search', params=params)
     except Exception as e:
         logger.error(f"Failed to get location: {name} - {e}")
         raise

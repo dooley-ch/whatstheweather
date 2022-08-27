@@ -156,7 +156,7 @@
         },
         "whatstheweather": {
             "git": "https://github.com/dooley-ch/whatstheweather",
-            "ref": "304e3e42c74ef30198715d77c94ca5580544be44"
+            "ref": "a1779849badbc5ca2ab9e186684bcb0669f1cb33"
         }
     },
     "develop": {

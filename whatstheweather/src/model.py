@@ -152,9 +152,9 @@ class CurrentWeather:
         table.add_column("Value")
 
         table.add_row("Summary", self.weather_summary)
-        table.add_row("Temperature", str(self.temperature))
-        table.add_row("Wind Speed", str(self.windspeed))
-        table.add_row("Wind Direction", str(self.winddirection))
+        table.add_row("Temperature", f"{self.temperature}°C")
+        table.add_row("Wind Speed", f"{self.windspeed} km/h")
+        table.add_row("Wind Direction", f"{self.winddirection}°")
 
         return Padding(table, (0, 0, 0, 3))
 
@@ -191,15 +191,15 @@ class Forecast:
 
         table.add_row("Date", self.day.to_date_string())
         table.add_row("Summary", self.weather_summary)
-        table.add_row("Max Temperature", str(self.temp_max))
-        table.add_row("Min Temperature", str(self.temp_min))
+        table.add_row("Max Temperature", f"{self.temp_max}°C")
+        table.add_row("Min Temperature", f"{self.temp_min}°C")
         table.add_row("Sunrise", self.sunrise.to_iso8601_string())
         table.add_row("Sunset", self.sunset.to_iso8601_string())
-        table.add_row("Total Precipitation", str(self.precipitation_sum))
-        table.add_row("Precipitation Hours", str(self.precipitation_hours))
-        table.add_row("Rain", str(self.rain))
-        table.add_row("Showers", str(self.showers))
-        table.add_row("Snowfall", str(self.snowfall))
+        table.add_row("Total Precipitation", f"{self.precipitation_sum}mm")
+        table.add_row("Precipitation Hours", f"{self.precipitation_hours} hours")
+        table.add_row("Rain", f"{self.rain}mm")
+        table.add_row("Showers", f"{self.showers}mm")
+        table.add_row("Snowfall", f"{self.snowfall}cm")
 
         return Padding(table, (0, 0, 0, 3))
 
@@ -228,8 +228,8 @@ class Forecasts(UserList):
         table.add_column("Snowfall", justify="right")
 
         for item in self:
-            table.add_row(item.day.to_date_string(), item.weather_summary, str(item.temp_max), str(item.temp_min),
-                          item.sunrise.to_iso8601_string(), item.sunset.to_iso8601_string(), str(item.precipitation_sum),
-                          str(item.precipitation_hours), str(item.rain), str(item.showers), str(item.snowfall))
+            table.add_row(item.day.to_date_string(), item.weather_summary, f"{item.temp_max}°C", f"{item.temp_min}°C",
+                          item.sunrise.to_iso8601_string(), item.sunset.to_iso8601_string(), f"{item.precipitation_sum}mm",
+                          f"{item.precipitation_hours} hours", f"{item.rain}mm", f"{item.showers}mm", f"{item.snowfall}cm")
 
         return Padding(table, (0, 0, 0, 3))
