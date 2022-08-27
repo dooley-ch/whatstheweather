@@ -19,7 +19,6 @@ __status__ = "Production"
 __all__ = ['app']
 
 import click
-from loguru import logger
 from .ui import *
 from .data import *
 from .weather_service import get_forecast, get_current_weather
@@ -53,7 +52,6 @@ def locations_add(count: int = 10) -> None:
     if record:
         if insert_location_record(record):
             success_message(f"New location added: {record.name}")
-            logger.info(f"New location added: {record.name}")
         else:
             error_message(f"Failed to add new location, see log for details: {record.name}")
 
@@ -75,7 +73,6 @@ def locations_edit(name: str) -> None:
     if record:
         if update_location_record(record):
             success_message(f"Location record updated: {record.name}")
-            logger.info(f"Location updated: {record.name}")
         else:
             warning_message(f"Failed to update location record, see log for details: {record.name}")
 
@@ -91,7 +88,6 @@ def locations_delete(name: str) -> None:
     if confirm_delete(name):
         if delete_location_record(name):
             success_message(f"Location deleted: {name}")
-            logger.info(f"Location deleted: {name}")
         else:
             warning_message(f"Failed to delete location, record not found: {name}")
 
