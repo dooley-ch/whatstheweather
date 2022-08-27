@@ -132,11 +132,12 @@ def system_message(value: str, clear: bool = False, pad: bool = True) -> None:
 
 
 # noinspection GrazieInspection
-def confirm_message(value: str, clear: bool = False, pad: bool = True) -> bool:
+def confirm_message(value: str, default: bool, clear: bool = False, pad: bool = True) -> bool:
     """
     This function ask the user to confirm or reject the execution of an action 
     
     :param value: the text to display
+    :param default: the default response if the user just hits enter
     :param clear: flag to indicate if the console should be cleared first
     :param pad: flag to indicate if the message should be preceded and succeeded by a blank line
 
@@ -148,7 +149,7 @@ def confirm_message(value: str, clear: bool = False, pad: bool = True) -> bool:
         console.line(1)
 
     msg = Text(value, style="confirm_message")
-    return Confirm.ask(msg)
+    return Confirm.ask(msg, default=default, show_default=True)
 
 
 def get_location(count: int) -> Location | None:
@@ -219,7 +220,7 @@ def confirm_delete(name: str, clear: bool = True, pad: bool = True) -> bool:
     :param pad: Flag to indicate if message should be padded
     :return: True if successful otherwise false
     """
-    return confirm_message(f"Are you sure you wish to delete the location: {name}")
+    return confirm_message(f"Are you sure you wish to delete the location: {name}", default=False)
 
 
 def display_locations(records: Locations) -> None:

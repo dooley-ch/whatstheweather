@@ -19,9 +19,11 @@ __status__ = "Production"
 __all__ = ['app']
 
 import click
-from . ui import *
-from . data import *
-from . weather_service import get_forecast
+from loguru import logger
+from .ui import *
+from .data import *
+from .weather_service import get_forecast
+
 
 @click.group(context_settings={'help_option_names': ('-h', '--help')})
 @click.version_option(__version__, '--version', '-v')
@@ -51,6 +53,7 @@ def locations_add(count: int = 10) -> None:
     if record:
         if insert_location_record(record):
             success_message(f"New location added: {record.name}")
+            logger.info(f"New location added: {record.name}")
         else:
             error_message(f"Failed to add new location, see log for details: {record.name}")
 
@@ -72,6 +75,7 @@ def locations_edit(name: str) -> None:
     if record:
         if update_location_record(record):
             success_message(f"Location record updated: {record.name}")
+            logger.info(f"Location updated: {record.name}")
         else:
             warning_message(f"Failed to update location record, see log for details: {record.name}")
 
@@ -87,6 +91,7 @@ def locations_delete(name: str) -> None:
     if confirm_delete(name):
         if delete_location_record(name):
             success_message(f"Location deleted: {name}")
+            logger.info(f"Location deleted: {name}")
         else:
             warning_message(f"Failed to delete location, record not found: {name}")
 
@@ -135,17 +140,17 @@ def weather_current(name: str) -> None:
 
     NAME - The name of the location for the current weather
     """
-    location = get_location_record(name)
-    if not location:
+    record = get_location_record(name)
+    if not record:
         system_message(f"There is no location defined with that name: {name}")
         return
 
-    weather = get_forecast(name, location.latitude, location.longitude, location.timezone)
-    if not weather:
+    forecast = get_forecast(name, record.latitude, record.longitude, record.timezone)
+    if not forecast:
         system_message(f"Unable to obtain a forecast for the location: {name}")
         return
 
-    display_current_weather(weather[0])
+    display_current_weather(forecast[0])
 
 
 @weather.command("forecast")
@@ -156,14 +161,14 @@ def weather_forecast(name: str) -> None:
 
     NAME - The name of the location for the forecast
     """
-    location = get_location_record(name)
-    if not location:
+    record = get_location_record(name)
+    if not record:
         system_message(f"There is no location defined with that name: {name}")
         return
 
-    weather = get_forecast(name, location.latitude, location.longitude, location.timezone)
-    if not weather:
+    forecast = get_forecast(name, record.latitude, record.longitude, record.timezone)
+    if not forecast:
         system_message(f"Unable to obtain a forecast for the location: {name}")
         return
 
-    display_weather_forecast(weather)
+    display_weather_forecast(forecast)
