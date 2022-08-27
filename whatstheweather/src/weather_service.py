@@ -22,9 +22,12 @@ from time import sleep
 
 import pendulum
 import requests
+from rich.console import Console
 from loguru import logger
 from . model import Location, Forecast, Locations, Forecasts, CurrentWeather
-from . ui import console
+
+
+_console = Console()
 
 
 def _get_summary(code: int) -> str:
@@ -79,7 +82,7 @@ def get_current_weather(location: str, lat: float, long: float, timezone: str) -
     }
 
     try:
-        with console.status("Downloading current weather..."):
+        with _console.status("Downloading current weather..."):
             sleep(2)
             response = requests.get(url='https://api.open-meteo.com/v1/forecast', params=params)
     except Exception as e:
@@ -122,7 +125,7 @@ def get_forecast(location: str, lat: float, long: float, timezone: str) -> Forec
     }
 
     try:
-        with console.status("Downloading weather forecast..."):
+        with _console.status("Downloading weather forecast..."):
             sleep(2)
             response = requests.get(url='https://api.open-meteo.com/v1/forecast', params=params)
     except Exception as e:
@@ -168,7 +171,7 @@ def get_locations(name: str, limit: int = 10) -> Locations | None:
     params = {"name": name, "count": limit}
 
     try:
-        with console.status("Downloading locations..."):
+        with _console.status("Downloading locations..."):
             sleep(2)
             response = requests.get(url='https://geocoding-api.open-meteo.com/v1/search', params=params)
     except Exception as e:
