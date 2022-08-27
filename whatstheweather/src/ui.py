@@ -25,7 +25,7 @@ from rich.prompt import Confirm, Prompt, IntPrompt, FloatPrompt
 from rich.text import Text
 from rich.theme import Theme
 
-from .model import Location, Locations, Forecast, Forecasts
+from .model import Location, Locations, Forecasts, CurrentWeather
 from .weather_service import get_locations
 
 theme = Theme({
@@ -247,7 +247,7 @@ def display_location_record(record: Location) -> None:
     console.line(1)
 
 
-def display_current_weather(weather: Forecast) -> None:
+def display_current_weather(weather: CurrentWeather) -> None:
     """
     This function displays the current weather forecast
 

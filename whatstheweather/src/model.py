@@ -16,7 +16,7 @@ __version__ = "1.0.0"
 __maintainer__ = "James Dooley"
 __status__ = "Production"
 
-__all__ = ['Location', 'LocationRecord', 'LocationRecordMetadata', 'Locations', 'Forecast', 'Forecasts']
+__all__ = ['Location', 'LocationRecord', 'LocationRecordMetadata', 'Locations', 'Forecast', 'Forecasts', 'CurrentWeather']
 
 from collections import UserList
 from typing import Any
@@ -122,6 +122,39 @@ class Locations(UserList):
         for item in self:
             count += 1
             table.add_row(str(count), item.name, str(item.latitude), str(item.longitude), item.region, item.country)
+
+        return Padding(table, (0, 0, 0, 3))
+
+
+@attrs.frozen
+class CurrentWeather:
+    """
+    This class represents the current weather
+    """
+    temperature: float = attrs.field(validator=attrs.validators.instance_of(float))
+    windspeed: float = attrs.field(validator=attrs.validators.instance_of(float))
+    winddirection: float = attrs.field(validator=attrs.validators.instance_of(float))
+    weather_code: int = attrs.field(validator=attrs.validators.instance_of(int))
+    weather_summary: str = attrs.field(validator=attrs.validators.instance_of(str))
+    current_time: pendulum.DateTime = attrs.field(validator=attrs.validators.instance_of(pendulum.DateTime))
+    location: str = attrs.field(validator=attrs.validators.instance_of(str))
+
+    def __rich__(self) -> Padding:
+        """
+        This method renders the class instance to the terminal
+        """
+        table = Table(title=f"Current Weather: {self.location} ({self.current_time.to_iso8601_string()})",
+                      style="table-style", show_header=False, show_footer=False,
+                      border_style="table-border-style", title_style="table-title-style",
+                      row_styles=["table-odd-row-style", "table-even-row-style"])
+
+        table.add_column("Parameter", justify='right')
+        table.add_column("Value")
+
+        table.add_row("Summary", self.weather_summary)
+        table.add_row("Temperature", str(self.temperature))
+        table.add_row("Wind Speed", str(self.windspeed))
+        table.add_row("Wind Direction", str(self.winddirection))
 
         return Padding(table, (0, 0, 0, 3))
 

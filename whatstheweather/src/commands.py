@@ -22,7 +22,7 @@ import click
 from loguru import logger
 from .ui import *
 from .data import *
-from .weather_service import get_forecast
+from .weather_service import get_forecast, get_current_weather
 
 
 @click.group(context_settings={'help_option_names': ('-h', '--help')})
@@ -145,12 +145,12 @@ def weather_current(name: str) -> None:
         system_message(f"There is no location defined with that name: {name}")
         return
 
-    forecast = get_forecast(name, record.latitude, record.longitude, record.timezone)
-    if not forecast:
-        system_message(f"Unable to obtain a forecast for the location: {name}")
+    current_weather = get_current_weather(name, record.latitude, record.longitude, record.timezone)
+    if not current_weather:
+        system_message(f"Unable to obtain current weather for the location: {name}")
         return
 
-    display_current_weather(forecast[0])
+    display_current_weather(current_weather)
 
 
 @weather.command("forecast")

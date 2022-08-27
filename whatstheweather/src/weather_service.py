@@ -16,12 +16,12 @@ __version__ = "1.0.0"
 __maintainer__ = "James Dooley"
 __status__ = "Production"
 
-__all__ = ['get_locations', 'get_forecast']
+__all__ = ['get_locations', 'get_forecast', 'get_current_weather']
 
 import pendulum
 import requests
 from loguru import logger
-from .model import Location, Forecast, Locations, Forecasts
+from .model import Location, Forecast, Locations, Forecasts, CurrentWeather
 
 
 def _get_summary(code: int) -> str:
@@ -56,10 +56,53 @@ def _get_summary(code: int) -> str:
             return 'Unknown'
 
 
+def get_current_weather(location: str, lat: float, long: float, timezone: str) -> CurrentWeather:
+    """
+    This function returns the weather forecast at the given location
+
+    :param location: The location requested
+    :param lat: The latitude for the location to report on
+    :param long:  The longitude for the location to report on
+    :param timezone: The time zone for the given location
+    :return: The 7-day forecast for the given location
+    """
+    params = {
+        "latitude": lat,
+        "longitude": long,
+        "daily": ['weathercode', 'temperature_2m_max', 'temperature_2m_min', 'sunrise', 'sunset', 'precipitation_sum',
+                  'rain_sum', 'showers_sum', 'snowfall_sum', 'precipitation_hours'],
+        "timezone": timezone,
+        "current_weather": "true"
+    }
+
+    try:
+        response = requests.get(url='https://api.open-meteo.com/v1/forecast', params=params)
+    except Exception as e:
+        logger.error(f"Failed to get forecast data: ({lat},{long}), {timezone} - {e}")
+        raise
+
+    if response.status_code == 200:
+        data = response.json()['current_weather']
+
+        time = pendulum.parse(data['time'])
+        weather_code = int(data['weathercode'])
+        weather_summary = _get_summary(weather_code)
+        temperature = data['temperature']
+        windspeed = data['windspeed']
+        winddirection = data['winddirection']
+
+        return CurrentWeather(temperature, windspeed, winddirection, weather_code, _get_summary(weather_code),
+                              time, location)
+    else:
+        logger.error(
+            f"Failed to obtain current weather data: ({lat},{long}), {timezone} - {response.status_code} - {response.text}")
+
+
 def get_forecast(location: str, lat: float, long: float, timezone: str) -> Forecasts:
     """
     This function returns the weather forecast at the given location
 
+    :param location: The location requested
     :param lat: The latitude for the location to report on
     :param long:  The longitude for the location to report on
     :param timezone: The time zone for the given location
