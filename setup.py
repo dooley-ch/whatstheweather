@@ -33,7 +33,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'whatstheweather = whatstheweather.core.commands:app',
+            'whatstheweather = whatstheweather.src.commands:app',
         ],
     },
 )
