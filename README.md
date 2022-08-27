@@ -2,13 +2,13 @@
 
 ![Splash](splash.jpg)
 
-This is a command line application that displays the current weather and forecast in tabular 
+This is a command line application that displays the current weather and forecast in tabular
 format for the given location.
 
 ## Installation
 
-The application can be installed into the default python installation on yor desktop computer or into a newly created 
-virtual environment.  To create a new environment and activate it using [Pipenv](https://pipenv.pypa.io/en/latest/) 
+The application can be installed into the default python installation on yor desktop computer or into a newly created
+virtual environment.  To create a new environment and activate it using [Pipenv](https://pipenv.pypa.io/en/latest/)
 execute the following commands:
 
 ```
@@ -30,8 +30,8 @@ whatstheweather --version
 
 ## Usage
 
-Before you can request the current weather or forecast, you need to add a location.  To do this issue the following 
-command and follow the on-screen instructions.  The edit and delete commands can be used to manage existing location 
+Before you can request the current weather or forecast, you need to add a location.  To do this issue the following
+command and follow the on-screen instructions.  The edit and delete commands can be used to manage existing location
 definitions.
 
 ```
@@ -48,10 +48,10 @@ whatstheweather location list
 
 ![List Locations](usage_2.png)
 
-To obtain the current weather for Rome, issue the following command:
+To obtain the current weather for Paris, issue the following command:
 
 ```
-whatstheweather weather current Rome
+whatstheweather weather current Paris
 ```
 
 ![List Locations](usage_3.png)
@@ -76,4 +76,3 @@ The application uses the following libraries to build the command line interface
 ## Follow Up
 
 A detailed commentary of this application can be found here: [Developer Notes](https://www.developernotes.org/2022/08/command-line-reference-application/)
- 
