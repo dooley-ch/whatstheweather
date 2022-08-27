@@ -30,8 +30,9 @@ whatstheweather --version
 
 ## Usage
 
-Before you can request the current weather or forecast, you need to add a location.  To do this execute the following 
-command and follow the on-screen instructions.
+Before you can request the current weather or forecast, you need to add a location.  To do this issue the following 
+command and follow the on-screen instructions.  The edit and delete commands can be used to manage existing location 
+definitions.
 
 ```
 whatstheweather location add
