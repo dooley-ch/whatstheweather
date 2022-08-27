@@ -7,12 +7,9 @@ name = "pypi"
 click = "*"
 attrs = "*"
 pendulum = "*"
-tinydb = "*"
 requests = "*"
 loguru = "*"
-inquirer = "*"
 rich = "*"
-yaspin = "*"
 
 [dev-packages]
 pytest = "*"

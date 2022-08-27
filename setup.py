@@ -22,20 +22,14 @@ setup(
     name='whatstheweather',
     version='1.0.0',
     packages=find_packages(exclude=('test',)),
-    package_data={
-      'whatstheweather': ['data/*.csv'],
-    },
     include_package_data=True,
     install_requires=[
         'Click',
         'Attrs',
         'Pendulum',
-        'TinyDB',
         'Requests',
         'Loguru',
-        'Inquirer',
-        'Rich',
-        'Yaspin'
+        'Rich'
     ],
     entry_points={
         'console_scripts': [
