@@ -10,7 +10,6 @@ pendulum = "*"
 requests = "*"
 loguru = "*"
 rich = "*"
-whatstheweather = {git = "https://github.com/dooley-ch/whatstheweather"}
 
 [dev-packages]
 pytest = "*"
