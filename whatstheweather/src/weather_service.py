@@ -120,7 +120,8 @@ def get_forecast(location: str, lat: float, long: float, timezone: str) -> Forec
         "latitude": lat,
         "longitude": long,
         "daily": ['weathercode', 'temperature_2m_max', 'temperature_2m_min', 'sunrise', 'sunset', 'precipitation_sum',
-                  'rain_sum', 'showers_sum', 'snowfall_sum', 'precipitation_hours'],
+                  'rain_sum', 'showers_sum', 'snowfall_sum', 'precipitation_hours', 'windspeed_10m_max',
+                  'winddirection_10m_dominant'],
         "timezone": timezone
     }
 
@@ -150,9 +151,12 @@ def get_forecast(location: str, lat: float, long: float, timezone: str) -> Forec
             showers = data['showers_sum'][i]
             snowfall = data['snowfall_sum'][i]
             precipitation_hours = data['precipitation_hours'][i]
+            windspeed = data['windspeed_10m_max'][i]
+            winddirection = data['winddirection_10m_dominant'][i]
 
             forecasts.append(Forecast(location, day, weather_code, weather_summary, temp_max, temp_min, sunrise, sunset,
-                                      precipitation_sum, rain, showers, snowfall, precipitation_hours))
+                                      precipitation_sum, rain, showers, snowfall, precipitation_hours, windspeed,
+                                      winddirection))
 
         return Forecasts(forecasts)
     else:

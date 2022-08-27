@@ -24,6 +24,7 @@ import attrs
 import pendulum
 from rich.padding import Padding
 from rich.table import Table
+import metpy.calc as metpy
 
 
 def _convert_post_codes(post_codes: Any) -> Any:
@@ -34,6 +35,16 @@ def _convert_post_codes(post_codes: Any) -> Any:
         return "".join(post_codes)
 
     return post_codes
+
+
+def _convert_degrees_direction(value: float) -> str:
+    """
+    This function converts wind degrees to direction
+
+    :param value: Wind direction in degrees
+    :return: Wind direction
+    """
+    return metpy.angle_to_direction(value)
 
 
 @attrs.frozen
@@ -154,7 +165,7 @@ class CurrentWeather:
         table.add_row("Summary", self.weather_summary)
         table.add_row("Temperature", f"{self.temperature}°C")
         table.add_row("Wind Speed", f"{self.windspeed} km/h")
-        table.add_row("Wind Direction", f"{self.winddirection}°")
+        table.add_row("Wind Direction", _convert_degrees_direction(self.winddirection))
 
         return Padding(table, (0, 0, 0, 3))
 
@@ -177,6 +188,8 @@ class Forecast:
     showers: float = attrs.field(validator=attrs.validators.instance_of(float))
     snowfall: float = attrs.field(validator=attrs.validators.instance_of(float))
     precipitation_hours: float = attrs.field(validator=attrs.validators.instance_of(float))
+    wind_speed: float = attrs.field(validator=attrs.validators.instance_of(float))
+    wind_direction: float = attrs.field(validator=attrs.validators.instance_of(float))
 
     def __rich__(self) -> Padding:
         """
@@ -200,6 +213,8 @@ class Forecast:
         table.add_row("Rain", f"{self.rain}mm")
         table.add_row("Showers", f"{self.showers}mm")
         table.add_row("Snowfall", f"{self.snowfall}cm")
+        table.add_row("Wind Speed", f"{self.wind_speed} km/h")
+        table.add_row("Wind Direction", _convert_degrees_direction(self.wind_direction))
 
         return Padding(table, (0, 0, 0, 3))
 
@@ -217,19 +232,22 @@ class Forecasts(UserList):
 
         table.add_column("Date")
         table.add_column("Summary")
-        table.add_column("Max Temperature", justify="right")
-        table.add_column("Min Temperature", justify="right")
+        table.add_column("Max Temp.", justify="right")
+        table.add_column("Min Temp.", justify="right")
         table.add_column("Sunrise")
         table.add_column("Sunset")
-        table.add_column("Total Precipitation", justify="right")
+        table.add_column("Precipitation", justify="right")
         table.add_column("Precipitation Hours", justify="right")
         table.add_column("Rain", justify="right")
         table.add_column("Showers", justify="right")
         table.add_column("Snowfall", justify="right")
+        table.add_column("Wind Speed", justify="right")
+        table.add_column("Wind Direction", justify="center")
 
         for item in self:
             table.add_row(item.day.to_date_string(), item.weather_summary, f"{item.temp_max}°C", f"{item.temp_min}°C",
                           item.sunrise.to_iso8601_string(), item.sunset.to_iso8601_string(), f"{item.precipitation_sum}mm",
-                          f"{item.precipitation_hours} hours", f"{item.rain}mm", f"{item.showers}mm", f"{item.snowfall}cm")
+                          f"{item.precipitation_hours} hours", f"{item.rain}mm", f"{item.showers}mm", f"{item.snowfall}cm",
+                          f"{item.wind_speed} km/h", _convert_degrees_direction(item.wind_direction))
 
         return Padding(table, (0, 0, 0, 3))

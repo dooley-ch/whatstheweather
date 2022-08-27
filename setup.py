@@ -29,7 +29,8 @@ setup(
         'Pendulum',
         'Requests',
         'Loguru',
-        'Rich'
+        'Rich',
+        'Metpy'
     ],
     entry_points={
         'console_scripts': [
