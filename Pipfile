@@ -11,6 +11,7 @@ requests = "*"
 loguru = "*"
 rich = "*"
 metpy = "*"
+related = "*"
 
 [dev-packages]
 pytest = "*"
