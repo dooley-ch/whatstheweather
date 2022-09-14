@@ -3,23 +3,12 @@
   <component name="ChangeListManager">
     <list default="true" id="0bbbcf94-358f-4a87-9f05-0eb6438ca616" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/setup.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/whatstheweather/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/wtw/core/commands/_weather.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/whatstheweather/__main__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/whatstheweather/src/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/whatstheweather/src/commands.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/whatstheweather/src/data.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/whatstheweather/src/errors.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/whatstheweather/src/model.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/whatstheweather/src/support.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/whatstheweather/src/ui.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/whatstheweather/src/weather_service.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/wtw/core/commands/_add_location.py" beforeDir="false" afterPath="$PROJECT_DIR$/wtw/core/commands/_add_location.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wtw/core/commands/_core.py" beforeDir="false" afterPath="$PROJECT_DIR$/wtw/core/commands/_core.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wtw/core/commands/_delete_location.py" beforeDir="false" afterPath="$PROJECT_DIR$/wtw/core/commands/_delete_location.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wtw/core/data.py" beforeDir="false" afterPath="$PROJECT_DIR$/wtw/core/data.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wtw/core/model.py" beforeDir="false" afterPath="$PROJECT_DIR$/wtw/core/model.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wtw/core/weather_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/wtw/core/weather_service.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/usage_1.png" beforeDir="false" afterPath="$PROJECT_DIR$/usage_1.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/usage_2.png" beforeDir="false" afterPath="$PROJECT_DIR$/usage_2.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/usage_3.png" beforeDir="false" afterPath="$PROJECT_DIR$/usage_3.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/usage_4.png" beforeDir="false" afterPath="$PROJECT_DIR$/usage_4.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/wtw/core/ui.py" beforeDir="false" afterPath="$PROJECT_DIR$/wtw/core/ui.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -98,7 +87,7 @@
       <option name="presentableId" value="Default" />
       <updated>1663094436956</updated>
       <workItem from="1663094438073" duration="10093000" />
-      <workItem from="1663147754217" duration="11878000" />
+      <workItem from="1663147754217" duration="13489000" />
     </task>
     <servers />
   </component>

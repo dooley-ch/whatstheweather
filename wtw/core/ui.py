@@ -74,7 +74,7 @@ def _message(value: str, text_style: str, clear: bool, pad: bool) -> None:
     if pad:
         console.line(1)
 
-    msg = Text(value, style=text_style)
+    msg = Text(f"\t{value}", style=text_style, tab_size=4)
     console.print(msg)
 
     if pad:
@@ -168,4 +168,4 @@ def confirm_message(value: str, default: bool, clear: bool = False, pad: bool = 
         console.line(1)
 
     msg = Text(value, style="confirm_message")
-    return Confirm.ask(msg, default=default, show_default=True)
+    return Confirm.ask(Text(f"\t{msg}", tab_size=4), default=default, show_default=True)

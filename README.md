@@ -25,17 +25,16 @@ pipenv install git+https://github.com/dooley-ch/whatstheweather#egg=whatstheweat
 Once the application has been installed, you can check the version number to ensure that it has been properly installed:
 
 ```
-whatstheweather --version
+wtw --version
 ```
 
 ## Usage
 
 Before you can request the current weather or forecast, you need to add a location.  To do this issue the following
-command and follow the on-screen instructions.  The edit and delete commands can be used to manage existing location
-definitions.
+command and follow the on-screen instructions.  The delete command can be used to delete existing location.
 
 ```
-whatstheweather location add
+wtw location add
 ```
 
 ![Add Location](usage_1.png)
@@ -43,15 +42,15 @@ whatstheweather location add
 To list the available locations, execute the following command:
 
 ```
-whatstheweather location list
+wtw location list
 ```
 
 ![List Locations](usage_2.png)
 
-To obtain the current weather for Paris, issue the following command:
+To obtain the current weather for Berlin, issue the following command:
 
 ```
-whatstheweather weather current Paris
+wtw current Berlin
 ```
 
 ![List Locations](usage_3.png)
@@ -59,7 +58,7 @@ whatstheweather weather current Paris
 To obtain the weather forecast for Rome, issue the following command:
 
 ```
-whatstheweather weather forecast Rome
+wtw forecast Rome
 ```
 
 ![List Locations](usage_4.png)
