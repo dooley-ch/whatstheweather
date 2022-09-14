@@ -4,17 +4,13 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-click = "*"
-attrs = "*"
-pendulum = "*"
-requests = "*"
-loguru = "*"
-rich = "*"
-metpy = "*"
 related = "*"
+rich = "*"
+click = "*"
+loguru = "*"
+requests = "*"
 
 [dev-packages]
-pytest = "*"
 
 [requires]
 python_version = "3.10"

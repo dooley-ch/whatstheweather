@@ -16,12 +16,14 @@ __version__ = "1.0.0"
 __maintainer__ = "James Dooley"
 __status__ = "Production"
 
-__all__ = ['console', 'message', 'success_message', 'error_message', 'system_message', 'warning_message']
+__all__ = ['console', 'message', 'success_message', 'error_message', 'system_message', 'warning_message',
+           'start_feature', 'end_feature']
 
 from rich.console import Console
 from rich.prompt import Confirm
 from rich.text import Text
 from rich.theme import Theme
+from rich.rule import Rule
 
 theme = Theme({
     "normal_message": "bright_white on black",
@@ -37,8 +39,30 @@ theme = Theme({
     "table-border-style": "bright_blue on black",
     "table-odd-row-style": "dark_sea_green3 on black",
     "table-even-row-style": "bright_blue on black",
+    "line-normal-style": "dim"
 })
 console = Console(theme=theme)
+
+
+def start_feature(message: str, style: str = "line-normal-style") -> None:
+    """
+    This function draws a line on the terminal
+    """
+    rule = Rule(title=Text(message, style=style), style=style)
+    console.clear()
+    console.line(1)
+    console.print(rule)
+    console.line(1)
+
+
+def end_feature(style: str = "line-normal-style") -> None:
+    """
+    This function draws a line on the terminal
+    """
+    rule = Rule(style=style)
+    console.line(1)
+    console.print(rule)
+    console.line(1)
 
 
 def _message(value: str, text_style: str, clear: bool, pad: bool) -> None:

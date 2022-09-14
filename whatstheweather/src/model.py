@@ -21,10 +21,8 @@ __all__ = ['Location', 'LocationRecord', 'LocationRecordMetadata', 'Locations', 
 from collections import UserList
 from typing import Any
 import attrs
-import pendulum
 from rich.padding import Padding
 from rich.table import Table
-import metpy.calc as metpy
 
 
 def _convert_post_codes(post_codes: Any) -> Any:
