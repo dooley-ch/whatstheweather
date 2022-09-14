@@ -29,6 +29,7 @@ def delete(location: str) -> model.Result:
     """
     ui.start_feature('Add Location')
 
+    location = location.title()
     record = data.get_location_record(location)
 
     if record is None:

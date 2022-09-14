@@ -90,37 +90,13 @@ def insert_location_record(record: model.Location, file: Path | None = None) -> 
             cursor = con.cursor()
             cursor.execute(sql, (record.name, record.location, record.latitude, record.longitude, record.timezone,
                                  record.region, record.country_code, record.country, ''.join(record.post_codes)))
-    except sqlite3.IntegrityError as e:
-        if str(e) == 'UNIQUE constraint failed: project.name':
-            raise errors.DuplicateRecordError(f"A location with the name: {record.name} already exists.")
-
+    except sqlite3.IntegrityError:
+        return False
     except Exception as e:
         logger.error(f"Failed to insert record: {record.name} - {e}")
         raise
     else:
         return cursor.lastrowid > 0
-    finally:
-        con.close()
-
-
-# noinspection SqlDialectInspection,SqlNoDataSourceInspection
-def update_location_record(record: model.Location, file: Path | None = None) -> bool:
-    """
-    This function updates a database record
-    """
-    sql = """UPDATE location SET location = ?, latitude = ?, longitude = ?, timezone = ?, region = ?, 
-                    country_code = ?, country = ?, post_codes =?, lock_version = lock_version + 1, 
-                    updated_at = CURRENT_TIMESTAMP WHERE (name = ?);"""
-
-    con = _get_connection(file)
-
-    try:
-        with con:
-            cursor = con.cursor()
-            cursor.execute(sql, (record.location, record.latitude, record.longitude, record.timezone,
-                                 record.region, record.country_code, record.country, record.post_codes, record.name))
-        return cursor.rowcount == 1
-
     finally:
         con.close()
 

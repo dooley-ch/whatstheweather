@@ -28,6 +28,7 @@ from .. import model
 from . import _add_location
 from . import _list_locations
 from . import _delete_location
+from . import _weather
 
 
 @click.group(context_settings={'help_option_names': ('-h', '--help')})
@@ -37,7 +38,6 @@ def app(**kwargs) -> None:
     This app produces current and daily weather reports for a given city.
     """
     pass
-
 
 
 @app.command('current')
@@ -50,7 +50,7 @@ def current_weather(ctx: click.Context, location: str) -> None:
 
     LOCATION The weather location
     """
-    pass
+    _weather.current(location)
 
 
 @app.command('forecast')
@@ -63,7 +63,7 @@ def forecast_weather(ctx: click.Context, location: str) -> None:
 
     LOCATION The forecast location
     """
-    pass
+    _weather.forecast(location)
 
 
 @app.group('location')

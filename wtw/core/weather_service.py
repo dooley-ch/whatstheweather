@@ -58,7 +58,7 @@ def _get_summary(code: int) -> str:
             return 'Unknown'
 
 
-def get_current_weather(location: str, lat: float, long: float, timezone: str) -> model.CurrentWeather:
+def get_current_weather(location: str, lat: float, long: float, timezone: str) -> model.CurrentWeather | None:
     """
     This function returns the weather forecast at the given location
 
@@ -102,7 +102,7 @@ def get_current_weather(location: str, lat: float, long: float, timezone: str) -
             f"{response.text}")
 
 
-def get_forecast(location: str, lat: float, long: float, timezone: str) -> model.Forecasts:
+def get_forecast(location: str, lat: float, long: float, timezone: str) -> model.Forecasts | None:
     """
     This function returns the weather forecast at the given location
 

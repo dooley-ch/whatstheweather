@@ -38,6 +38,8 @@ def add() -> model.Result:
         ui.system_message('Add location aborted.')
         return model.Result.NoOperation
 
+    name = name.title()
+
     ui.console.line(1)
     with ui.console.status('Download locations...'):
         locations = weather_service.get_locations(name)
@@ -66,7 +68,9 @@ def add() -> model.Result:
         ui.system_message('Add location aborted.')
         return model.Result.NoOperation
 
-    data.insert_location_record(location)
+    if not data.insert_location_record(location):
+        ui.system_message('A location with this name already exists.')
+        return model.Result.NoOperation
 
     ui.end_feature()
 

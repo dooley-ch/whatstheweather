@@ -16,12 +16,23 @@ __version__ = "1.0.0"
 __maintainer__ = "James Dooley"
 __status__ = "Production"
 
-__all__ = ['Location', 'Forecast', 'CurrentWeather', 'Locations', 'Forecasts']
+__all__ = ['Location', 'Forecast', 'CurrentWeather', 'Locations', 'Forecasts', 'CurrentWeatherScreen',
+           'WeatherForecastScreen']
 
 import enum
 import related
+from rich import box
 from rich.padding import Padding
 from rich.table import Table
+
+
+def _degrees_2_direction(degrees: int) -> str:
+    """
+    Converts degrees to directions
+    """
+    directions = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"]
+    value = int((degrees / 22.5) + .5)
+    return directions[(value % 16)]
 
 
 @enum.unique
@@ -53,8 +64,9 @@ class Location:
     updated_at = related.DateTimeField(required=False)
 
     def __rich__(self) -> Padding:
-        table = Table(title=f"location: {self.name}", show_header=False, show_footer=False, style="table-style",
-                      title_style="table-title-style", border_style="table-border-style")
+        table = Table(style="table-style", show_header=False, show_footer=False,
+                      border_style="table-border-style", title_style="table-title-style",
+                      row_styles=["table-odd-row-style", "table-even-row-style"])
 
         table.add_column("Attribute", justify='right')
         table.add_column("Value")
@@ -91,7 +103,8 @@ class Locations(list):
         count = 0
 
         for row_number, item in enumerate(self):
-            table.add_row(str(row_number), item.name, str(item.latitude), str(item.longitude), item.region, item.country)
+            table.add_row(str(row_number), item.name, str(item.latitude), str(item.longitude), item.region,
+                          item.country)
 
         return Padding(table, (0, 0, 0, 3))
 
@@ -109,24 +122,57 @@ class CurrentWeather:
     current_time = related.DateTimeField(required=True)
     location = related.StringField(required=True)
 
-    # def __rich__(self) -> Padding:
-    #     """
-    #     This method renders the class instance to the terminal
-    #     """
-    #     table = Table(title=f"Current Weather: {self.location} ({self.current_time.to_iso8601_string()})",
-    #                   style="table-style", show_header=False, show_footer=False,
-    #                   border_style="table-border-style", title_style="table-title-style",
-    #                   row_styles=["table-odd-row-style", "table-even-row-style"])
-    #
-    #     table.add_column("Parameter", justify='right')
-    #     table.add_column("Value")
-    #
-    #     table.add_row("Summary", self.weather_summary)
-    #     table.add_row("Temperature", f"{self.temperature}°C")
-    #     table.add_row("Wind Speed", f"{self.windspeed} km/h")
-    #     table.add_row("Wind Direction", _convert_degrees_direction(self.winddirection))
-    #
-    #     return Padding(table, (0, 0, 0, 3))
+    def __rich__(self) -> Table:
+        """
+        This method renders the class instance to the terminal
+        """
+        table = Table(style="table-style", show_header=False, show_footer=False,
+                      border_style="table-border-style", title_style="table-title-style",
+                      row_styles=["table-odd-row-style", "table-even-row-style"])
+
+        table.add_column("Parameter", justify='right')
+        table.add_column("Value")
+
+        table.add_row("Summary", self.weather_summary)
+        table.add_row("Temperature", f"{self.temperature}°C")
+        table.add_row("Wind Speed", f"{self.windspeed} km/h")
+        table.add_row("Wind Direction", _degrees_2_direction(self.winddirection))
+
+        return table
+
+
+@related.immutable
+class CurrentWeatherScreen:
+    """
+    This function formats the current weather for display on the terminal
+    """
+    location = related.ChildField(Location, required=True)
+    weather = related.ChildField(CurrentWeather, required=True)
+
+    def __rich__(self) -> Table:
+        """
+        This method formats the current weather for display in the terminal
+        """
+        location = table = Table(style="table-style", show_header=False, show_footer=False,
+                                 border_style="table-border-style", title_style="table-title-style",
+                                 row_styles=["table-odd-row-style", "table-even-row-style"])
+
+        location.add_column("Attribute", justify='right')
+        location.add_column("Value")
+
+        location.add_row("Location:", self.location.location)
+        location.add_row("Region:", self.location.region)
+        location.add_row("Country:", self.location.country)
+        location.add_row("Timezone", self.location.timezone)
+
+        date = self.weather.current_time.strftime("%d-%m-%Y, %H:%M:%S")
+        table = Table(title=f"Current Weather - {date}", show_header=False, show_footer=False,
+                      box=box.SIMPLE, collapse_padding=True)
+        table.add_column(no_wrap=True)
+        table.add_column(no_wrap=True)
+        table.add_row(location, self.weather)
+
+        return table
 
 
 @related.immutable()
@@ -180,40 +226,57 @@ class Forecast:
 
 
 class Forecasts(list):
-    pass
+    """
+    This collection houses the metadata for the locations store din the database
+    """
 
-# class Forecasts(UserList):
-#     """
-#     This collection houses the metadata for the locations store din the database
-#     """
-#     def __rich__(self) -> Padding:
-#         forecast = self[0]
-#
-#         table = Table(title=f"Forecast for: {forecast.location}", style="table-style",
-#         header_style="table-header-style",
-#                       title_style="table-title-style", row_styles=["table-odd-row-style", "table-even-row-style"],
-#                       border_style="table-border-style")
-#
-#         table.add_column("Date")
-#         table.add_column("Summary")
-#         table.add_column("Max Temp.", justify="right")
-#         table.add_column("Min Temp.", justify="right")
-#         table.add_column("Sunrise")
-#         table.add_column("Sunset")
-#         table.add_column("Precipitation", justify="right")
-#         table.add_column("Precipitation Hours", justify="right")
-#         table.add_column("Rain", justify="right")
-#         table.add_column("Showers", justify="right")
-#         table.add_column("Snowfall", justify="right")
-#         table.add_column("Wind Speed", justify="right")
-#         table.add_column("Wind Direction", justify="center")
-#
-#         for item in self:
-#             table.add_row(item.day.to_date_string(), item.weather_summary, f"{item.temp_max}°C", f"{item.temp_min}°C",
-#                           item.sunrise.to_iso8601_string(), item.sunset.to_iso8601_string(),
-#                           f"{item.precipitation_sum}mm",
-#                           f"{item.precipitation_hours} hours", f"{item.rain}mm", f"{item.showers}mm",
-#                           f"{item.snowfall}cm",
-#                           f"{item.wind_speed} km/h", _convert_degrees_direction(item.wind_direction))
-#
-#         return Padding(table, (0, 0, 0, 3))
+    def __rich__(self) -> Table:
+        forecast = self[0]
+
+        table = Table(style="table-style",
+                      header_style="table-header-style",
+                      title_style="table-title-style", row_styles=["table-odd-row-style", "table-even-row-style"],
+                      border_style="table-border-style")
+
+        table.add_column("Date")
+        table.add_column("Summary")
+        table.add_column("Max Temp.", justify="right")
+        table.add_column("Min Temp.", justify="right")
+        table.add_column("Sunrise")
+        table.add_column("Sunset")
+        table.add_column("Rain", justify="right")
+        table.add_column("Showers", justify="right")
+        table.add_column("Snowfall", justify="right")
+        table.add_column("Wind Speed", justify="right")
+        table.add_column("Wind Direction", justify="center")
+
+        for item in self:
+            date = item.day.strftime("%d-%m-%Y")
+            sunset_date = item.sunset.strftime("%H:%M:%S")
+            sunrise_date = item.sunrise.strftime("%H:%M:%S")
+
+            table.add_row(date, item.weather_summary, f"{item.temp_max}°C", f"{item.temp_min}°C",
+                          sunrise_date, sunset_date, f"{item.rain}mm", f"{item.showers}mm", f"{item.snowfall}cm",
+                          f"{item.wind_speed} km/h", _degrees_2_direction(item.wind_direction))
+
+        return table
+
+
+@related.immutable
+class WeatherForecastScreen:
+    """
+    This function formats the current weather for display on the terminal
+    """
+    location = related.ChildField(Location, required=True)
+    forecasts = related.ChildField(Forecasts, required=True)
+
+    def __rich__(self) -> Table:
+        """
+        This method formats the current weather for display in the terminal
+        """
+        table = Table(title=f'Weather Forecast - {self.location.location}', show_header=False, show_footer=False,
+                      box=box.SIMPLE, collapse_padding=True)
+        table.add_column(no_wrap=True)
+        table.add_row(self.forecasts)
+
+        return table

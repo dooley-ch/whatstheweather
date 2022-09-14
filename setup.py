@@ -25,16 +25,14 @@ setup(
     include_package_data=True,
     install_requires=[
         'Click',
-        'Attrs',
-        'Pendulum',
         'Requests',
         'Loguru',
         'Rich',
-        'Metpy'
+        'Related'
     ],
     entry_points={
         'console_scripts': [
-            'whatstheweather = whatstheweather.src.commands:app',
+            'wtw = wtw.core.commands:main',
         ],
     },
 )
